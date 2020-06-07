@@ -1,9 +1,15 @@
-#include <iostream>
-
-using namespace std;
-
-int main()
+#include <QCoreApplication>
+#include "bandatom.h"
+#include "bansoperator.h"
+#include "bandoperator.h"
+#include "bandatalist.h"
+#include "banstatementlist.h"
+#include "banlogicimpl.h"
+using namespace BANLogic;
+int main(int argc, char *argv[])
 {
-    cout << "Hello World!" << endl;
-    return 0;
+    QCoreApplication a(argc, argv);
+    BANLogicImpl *mylogic=new BANLogicImpl();
+    mylogic->show();
+    return a.exec();
 }
