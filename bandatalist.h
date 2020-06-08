@@ -20,8 +20,8 @@ protected:
 
 public:
     BanDataList();
-    BanDataList( QList<BanDComponent*> dList);
-    BanDataList(QList<BanSComponent*> dList);
+    BanDataList(QList<BanDComponent*> dList1);
+    BanDataList(QList<BanSComponent*> dList1);
 
     virtual void printRPN();
     virtual void print() override;
@@ -32,6 +32,7 @@ public:
     virtual bool unify(BanSComponent &Scomp) override;
     bool getInstantiate() const override;
     bool getIfMatches() const override;
+    QList<BanSComponent *> getStList() const;
 };
 }
 #endif // BANDATALIST_H

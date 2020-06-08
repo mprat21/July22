@@ -32,15 +32,13 @@ QStack<QString> BANLogic::BanDataList::getPrintStack()
     return printStack;
 }
 
+QList<BanSComponent *> BanDataList::getStList() const
+{
+    return StList;
+}
+
 BANLogic::BanDataList::BanDataList()
 {
-    if(this->dataID=="" || this->dataID.isEmpty() || this->dataID.isNull())
-    {
-        this->dataID=QString("_D_%1").arg(datacount++);
-        this->instantiate=false;
-        QTextStream(stdout)<<this->dataID<<endl;
-        StList.append(this);
-    }
     foreach(BanDComponent *ptr, this->getDataList())
     {
         switch(ptr->getDtype())
@@ -86,7 +84,12 @@ BANLogic::BanDataList::BanDataList()
         }
         case BanDComponentType::bAnyData:
         {
-            if(instantiate==true)
+            if(this->dataID=="" || this->dataID.isEmpty() || this->dataID.isNull())
+            {
+                this->dataID=QString("_D_%1").arg(datacount++);
+                this->instantiate=false;
+            }
+            else if(instantiate==true)
             {
                 BanDataList *dL = dynamic_cast<BanDataList *>(ptr);
                 BanDataList *dL2=new BanDataList(dL->getDataList());
@@ -97,134 +100,82 @@ BANLogic::BanDataList::BanDataList()
         }
     }
 }
-
 BANLogic::BanDataList::BanDataList(QList<BanDComponent *> dList):BanSComponent(BanSComponentType::bData)
 {
     dataList=dList;
-    this->instantiate=false;
-    foreach(BanDComponent *ptr, this->getDataList())
-    {
-        switch(ptr->getDtype())
-        {
-        case BanDComponentType::bAtom:
-        {
-            instantiate=true;
-            printStack.push(ptr->getID());
-            break;
-        }
-        case BanDComponentType::bOperator:
-        {
-            instantiate=true;
-            BanDOperator * bop = dynamic_cast<BanDOperator *>(ptr);
-            switch (bop->getDOtype())
-            {
-            case BanDOperatorType::concates:{
-                printStack.push(printStack.pop()+","+printStack.pop());
-                break;
-            }
-            case BanDOperatorType::Encryption:{
-                printStack.push("{"+printStack.pop()+"}"+printStack.pop());
-                break;
-            }
-            case BanDOperatorType::FreshData:{
-                printStack.push(printStack.pop()+ptr->getID()+printStack.pop());
-                break;
-            }
-            case BanDOperatorType::ShareKey:{
-                printStack.push(printStack.pop()+ptr->getID()+printStack.pop());
-                break;
-            }
-            case BanDOperatorType::ShareSecret:{
-                printStack.push(printStack.pop()+ptr->getID()+printStack.pop());
-                break;
-            }
-            case BanDOperatorType::HashKey:{
-                printStack.push(printStack.pop()+ptr->getID()+printStack.pop());
-                break;
-            }
-            }
-            break;
-        }
-        case BanDComponentType::bAnyData:
-        {
-            if(this->instantiate==true)
-            {
-                BanDataList *dL = dynamic_cast<BanDataList *>(ptr);
-                BanDataList *dL2=new BanDataList(dL->getDataList());
-                instantiate=true;
-            }
-            break;
-        }
-        }
-    }
+       this->instantiate=false;
+       foreach(BanDComponent *ptr, this->getDataList())
+       {
+           switch(ptr->getDtype())
+           {
+           case BanDComponentType::bAtom:
+           {
+               instantiate=true;
+               printStack.push(ptr->getID());
+               break;
+           }
+           case BanDComponentType::bOperator:
+           {
+               instantiate=true;
+               BanDOperator * bop = dynamic_cast<BanDOperator *>(ptr);
+               switch (bop->getDOtype())
+               {
+               case BanDOperatorType::concates:{
+                   printStack.push(printStack.pop()+","+printStack.pop());
+                   break;
+               }
+               case BanDOperatorType::Encryption:{
+                   printStack.push("{"+printStack.pop()+"}"+printStack.pop());
+                   break;
+               }
+               case BanDOperatorType::FreshData:{
+                   printStack.push(printStack.pop()+ptr->getID()+printStack.pop());
+                   break;
+               }
+               case BanDOperatorType::ShareKey:{
+                   printStack.push(printStack.pop()+ptr->getID()+printStack.pop());
+                   break;
+               }
+               case BanDOperatorType::ShareSecret:{
+                   printStack.push(printStack.pop()+ptr->getID()+printStack.pop());
+                   break;
+               }
+               case BanDOperatorType::HashKey:{
+                   printStack.push(printStack.pop()+ptr->getID()+printStack.pop());
+                   break;
+               }
+               }
+               break;
+           }
+           case BanDComponentType::bAnyData:
+           {
+               if(this->instantiate==true)
+               {
+                   BanDataList *dL = dynamic_cast<BanDataList *>(ptr);
+                   BanDataList *dL2=new BanDataList(dL->getDataList());
+                   instantiate=true;
+               }
+               break;
+           }
+           }
+       }
+
 }
 
-BanDataList::BanDataList(QList<BanSComponent *> dList)
+BANLogic::BanDataList::BanDataList(QList<BanSComponent *> dList):BanSComponent(BanSComponentType::bData)
 {
+    //dList has {BanDataList({(Principal,"A")}),newData2,BanDataList({new BanDOperator(BanDOperatorType::concates)})
+    //list has 3 objects of data
     foreach(BanSComponent *ptr, dList)
     {
-        switch(ptr->getStype())
+        BanDataList *datas=dynamic_cast<BanDataList *>(ptr);
+        new BanDataList(datas->getDataList());
+        foreach(BanDComponent *myptr, datas->getDataList())
         {
-        case BanSComponentType::bData:
-        {
-            BanDataList *dL = dynamic_cast<BanDataList *>(ptr);
-
-            if(dL->dataID=="" || dL->dataID.isEmpty() || dL->dataID.isNull())
-            {
-                dL->instantiate=false;
-                QTextStream(stdout)<<dL->datacount<<endl;
-                QTextStream(stdout)<<dL->dataID<<endl;
-            }
-            else
-            {
-                BanDataList *dL = dynamic_cast<BanDataList *>(ptr);
-                BanDataList *dL2=new BanDataList(dL->getDataList());
-                this->instantiate=true;
-                //printStack.push(ptr->getID());
-            }
-            break;
-        }
-        case BanSComponentType::bSOperator:
-        {
-            instantiate=true;
-            BanDOperator * bop = dynamic_cast<BanDOperator *>(ptr);
-            switch (bop->getDOtype())
-            {
-            case BanDOperatorType::concates:{
-                printStack.push(printStack.pop()+","+printStack.pop());
-                break;
-            }
-            case BanDOperatorType::Encryption:{
-                printStack.push("{"+printStack.pop()+"}"+printStack.pop());
-                break;
-            }
-            case BanDOperatorType::FreshData:{
-                printStack.push(printStack.pop()+ptr->getID()+printStack.pop());
-                break;
-            }
-            case BanDOperatorType::ShareKey:{
-                printStack.push(printStack.pop()+ptr->getID()+printStack.pop());
-                break;
-            }
-            case BanDOperatorType::ShareSecret:{
-                printStack.push(printStack.pop()+ptr->getID()+printStack.pop());
-                break;
-            }
-            case BanDOperatorType::HashKey:{
-                printStack.push(printStack.pop()+ptr->getID()+printStack.pop());
-                break;
-            }
-            }
-            break;
-        }
-        case BanSComponentType::bStatement:
-        {
-
-        }
         }
     }
-
 }
+
 
 bool BANLogic::BanDataList::match(BanSComponent &Scomp)
 {

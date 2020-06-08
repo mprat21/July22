@@ -13,3 +13,9 @@ BANLogic::BanSComponent::BanSComponent(BanSComponentType sTy):stype(sTy)
 {
 }
 
+BanSComponent::BanSComponent(QList<BanSComponent *> sList)
+{
+
+
+}
+

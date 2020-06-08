@@ -15,6 +15,8 @@ protected:
 public:
     BanSComponent();
     BanSComponent(BanSComponentType sTy);
+    BanSComponent(QList<BanSComponent*> sList);
+
     BanSComponentType getStype() const;
     virtual void print()=0;
     virtual QString getID()=0;
