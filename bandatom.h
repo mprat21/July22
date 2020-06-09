@@ -15,8 +15,8 @@ protected:
 public:
     BanDAtom();
     BanDAtom(banAtomtype aTy, QString aVal);
-    virtual QString getID () override{return aValue;}
-    virtual void print() override{QTextStream(stdout) <<" "+aValue+" "<<flush;}
+    virtual QString getID () override{return this->aValue;}
+    virtual void print() override{QTextStream(stdout) <<this->getID()+" "<<flush;}
     virtual banAtomtype getAtype() const;
     virtual void setAtomtype(banAtomtype aTy);
     virtual void setDtype(QString aTy) override;
@@ -25,6 +25,9 @@ public:
     void setId(const QString &value) override;
     bool getInstantiate() const override;
     bool getIfMatches() const override;
+    virtual void printRPN()override{QTextStream(stdout) <<this->getID()+" "<<flush;};
+
+
 };
 
 }

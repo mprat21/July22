@@ -1,3 +1,4 @@
+#include "bandatac.h"
 #include "banlogicimpl.h"
 using namespace BANLogic;
 
@@ -7,7 +8,7 @@ BANLogicImpl::BANLogicImpl()
 
 void BANLogicImpl::show()
 {
-    /*
+
     BanDataList *dcomp,*d;
     dcomp=new BanDataList({new BanDAtom(Principal,"A"), new BanDAtom(Principal,"B"),
                            new BanDAtom(Nonce,"Na"), new BanDOperator(BanDOperatorType::concates),
@@ -36,26 +37,29 @@ void BANLogicImpl::show()
     cout<<endl<<endl<<"Check if the list dcomp matches with d list:"<<endl;
     if(dcomp->match(*d))
     {
-        dcomp->print();cout<<" == "; d->print(); cout<<endl;
+        d->print();cout<<" == "; dcomp->print(); cout<<endl;
     }
     else
     {
-        dcomp->print();cout<<"  != ";d->print();cout<<endl;
+        d->print();cout<<"  != ";dcomp->print();cout<<endl;
     }
     cout<<endl;
     cout<<"display which free elements can be unified and unify it:"<<endl;
     cout<<endl;
     if(dcomp->unify(*d))
     {
-        cout<<"After unification print dcomp in rpn and infix:"<<endl;
-        dcomp->printRPN(); dcomp->print();
-        cout<<endl<<endl<<"After unification print d in rpn and infix:"<<endl;
-        d->printRPN();d->print();
+        cout<<"After unification print d in rpn and infix:"<<endl;
+        d->printRPN(); d->print();
+        cout<<endl<<endl<<"After unification print dcom in rpn and infix:"<<endl;
+        dcomp->printRPN();dcomp->print();
     }
     cout<<endl;
-*/
-    //match and unify for type data
-    BanDataList *newData,*newData2;
+    cout<<endl;
+    cout<<endl;
+    cout<<endl;
+    cout<<endl;
+
+    BanDataList *newData,*newData2,*newData3;
     newData2=new BanDataList({new BanDAtom(Principal,"A"),
                               new BanDAtom(SymKey,"Na"),
                               new BanDOperator(BanDOperatorType::concates)
@@ -63,23 +67,37 @@ void BANLogicImpl::show()
     newData2->printRPN();
     newData2->print();
     cout<<endl;
-    newData=new BanDataList({
-                    new BanDAtom(Principal,"A"),
-                    new BanDAtom(Principal,""),
-                    new BanDOperator(BanDOperatorType::concates)
-                    });
+    cout<<endl;
+
+    newData=new BanDataList({new BanDAtom(Principal,""),
+                             new BanDataC(),
+                             new BanDOperator(BanDOperatorType::concates),
+                             new BanDAtom(SymKey,""),
+                             new BanDOperator(BanDOperatorType::Encryption),
+                            });
+    newData->printRPN();
     newData->print();
+    cout<<endl;
+    cout<<endl;
 
-
-
-
-
-
-
-
+    newData3=new BanDataList({new BanDAtom(Principal,"B"),
+                             new BanDataC(BanDComponentType::bAnyData,
+                             {
+                                new BanDAtom(Principal,"A"),
+                                new BanDAtom(SymKey,"Na"),
+                                new BanDOperator(BanDOperatorType::concates)
+                             }),
+                             new BanDOperator(BanDOperatorType::concates),
+                             new BanDAtom(SymKey,"Kab"),
+                             new BanDOperator(BanDOperatorType::Encryption),
+                            });
+    newData3->printRPN();
+    newData3->print();
+    cout<<endl;
+    cout<<endl;
 
     //-------------------------------------------------------------------------------------------------
-/*
+
     QList<BanDComponent*> datalis;
     QList<BanSComponent*> stList;
     datalis.append(new BanDAtom(Principal,"A"));
@@ -123,7 +141,7 @@ void BANLogicImpl::show()
     cout<<"Printing the multiple Statements inside  statment in Infix notation:"<<endl;
     sscompt1->print();
     cout<<endl;
-    */
+
 }
 
 

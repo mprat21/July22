@@ -15,6 +15,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+        bandatac.cpp \
         bandatalist.cpp \
         bandatom.cpp \
         bandcomponent.cpp \
@@ -29,6 +30,7 @@ SOURCES += \
 
 HEADERS += \
     banEnumTypes.h \
+    bandatac.h \
     bandatalist.h \
     bandatom.h \
     bandcomponent.h \

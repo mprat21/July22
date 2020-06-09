@@ -102,7 +102,8 @@ bool BanDAtom::getIfMatches() const
     return ifMatches;
 }
 
-BANLogic::BanDAtom::BanDAtom()
+
+BANLogic::BanDAtom::BanDAtom():BanDComponent(BanDComponentType::bAtom)
 {
 }
 

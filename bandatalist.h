@@ -13,6 +13,7 @@ class BanDataList : public BanSComponent
 protected:
    static int datacount;
     QString dataID;
+    BanDComponentType dType;
     QList<BanDComponent*> dataList;
     QStack<QString> printStack;
     QList<BanSComponent*> StList;
@@ -21,7 +22,6 @@ protected:
 public:
     BanDataList();
     BanDataList(QList<BanDComponent*> dList1);
-    BanDataList(QList<BanSComponent*> dList1);
 
     virtual void printRPN();
     virtual void print() override;
@@ -33,6 +33,7 @@ public:
     bool getInstantiate() const override;
     bool getIfMatches() const override;
     QList<BanSComponent *> getStList() const;
+   // QList<BanDataList *> getDList1() const;
 };
 }
 #endif // BANDATALIST_H

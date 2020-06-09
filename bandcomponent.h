@@ -18,6 +18,7 @@ public:
     virtual void setDtype(QString dType)=0;
     virtual void setId(const QString &value)=0;
     virtual QString getID()=0;
+    virtual void printRPN()=0;
     virtual void print() = 0;
     virtual bool getInstantiate() const=0;
     virtual bool match(BanDComponent *value)=0;

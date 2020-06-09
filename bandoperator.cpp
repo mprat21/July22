@@ -93,7 +93,7 @@ bool BanDOperator::getIfMatches() const
     return ifMatches;
 }
 
-BANLogic::BanDOperator::BanDOperator()
+BANLogic::BanDOperator::BanDOperator():BanDComponent(BanDComponentType::bOperator)
 {
 
 }
@@ -103,7 +103,7 @@ BANLogic::BanDOperator::BanDOperator(BanDOperatorType adTy):BanDComponent(BanDCo
     switch(adTy)
     {
     case BanDOperatorType::concates:{
-        oValue="concates ";
+        oValue=" concates ";
         break;
     }
     case BanDOperatorType::Encryption:{
