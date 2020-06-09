@@ -16,11 +16,18 @@ void BANLogic::BanDataList::printRPN()
 
 void BANLogic::BanDataList::print()
 {      
+    BanDataList *mybn=new BanDataList(this->getDataList());
 
+    foreach(QString val,mybn->getPrintStack())
+    {
+        QTextStream(stdout)<<val;
+    }
+/*
     foreach(QString val,this->getPrintStack())
     {
         QTextStream(stdout)<<val;
     }
+    */
 }
 
 QList<BanDComponent *> BANLogic::BanDataList::getDataList()
@@ -207,6 +214,7 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                     if(unifies)
                     {
                         this->getDataList().replace(i,data.getDataList().value(i));
+
                     }
                     break;
                 }

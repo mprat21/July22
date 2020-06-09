@@ -59,7 +59,7 @@ void BANLogicImpl::show()
     cout<<endl;
     cout<<endl;
 
-    BanDataList *newData,*newData2,*newData3;
+    BanDataList *newData,*newData2,*newData3, *newData4;
     newData2=new BanDataList({new BanDAtom(Principal,"A"),
                               new BanDAtom(SymKey,"Na"),
                               new BanDOperator(BanDOperatorType::concates)
@@ -95,6 +95,30 @@ void BANLogicImpl::show()
     newData3->print();
     cout<<endl;
     cout<<endl;
+
+    newData4=new BanDataList({new BanDAtom(Principal,"B"),
+                             new BanDataC(BanDComponentType::bAnyData,
+                             {
+                                new BanDAtom(Principal,"A"),
+                                new BanDAtom(SymKey,"Na"),
+                                new BanDOperator(BanDOperatorType::concates)
+                             }),
+                              new BanDataC(BanDComponentType::bAnyData,
+                              {
+                                 new BanDAtom(Principal,"S"),
+                                 new BanDAtom(SymKey,"Kas"),
+                                  new BanDOperator(BanDOperatorType::Encryption),
+                              }),
+                              new BanDOperator(BanDOperatorType::concates),
+                             new BanDOperator(BanDOperatorType::concates),
+                             new BanDAtom(SymKey,"Kab"),
+                             new BanDOperator(BanDOperatorType::Encryption),
+                            });
+    newData4->printRPN();
+    newData4->print();
+    cout<<endl;
+    cout<<endl;
+
 
     //-------------------------------------------------------------------------------------------------
 

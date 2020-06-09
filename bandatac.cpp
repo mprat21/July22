@@ -47,7 +47,8 @@ void BANLogic::BanDataC::print()
 {
     foreach(BanDComponent *ptr,this->myListdata)
     {
-         ptr->print();
+         //ptr->print();
+        QTextStream(stdout)<<ptr->getID();
     }
 }
 
