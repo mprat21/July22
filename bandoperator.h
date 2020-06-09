@@ -23,6 +23,8 @@ public:
     void setId(const QString &value) override;
     bool getIfMatches() const override;
     virtual void printRPN() override{QTextStream(stdout)<<this->oValue<<flush;};
+    virtual void setInstantiate(bool value) override{this->instantiate=value;}
+
 
 };
 }

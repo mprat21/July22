@@ -28,6 +28,8 @@ public:
     QList<BanDComponent *> getMyListdata() const;
     virtual void printRPN()override;
     QStack<QString> getPrintQStack() const;
+    virtual void setInstantiate(bool value) override{this->instantiate=value;}
+
 };
 }
 #endif // BANDATAC_H

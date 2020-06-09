@@ -26,7 +26,10 @@ public:
     bool getInstantiate() const override;
     bool getIfMatches() const override;
     virtual void printRPN()override{QTextStream(stdout) <<this->getID()+" "<<flush;};
+    virtual void setInstantiate(bool value) override{this->instantiate=value;}
 
+
+    ~BanDAtom();
 
 };
 

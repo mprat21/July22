@@ -8,7 +8,7 @@ BANLogicImpl::BANLogicImpl()
 
 void BANLogicImpl::show()
 {
-
+/*
     BanDataList *dcomp,*d;
     dcomp=new BanDataList({new BanDAtom(Principal,"A"), new BanDAtom(Principal,"B"),
                            new BanDAtom(Nonce,"Na"), new BanDOperator(BanDOperatorType::concates),
@@ -34,7 +34,7 @@ void BANLogicImpl::show()
     d->printRPN();
     cout<<endl<<endl<<"Printing d data list in Infix notation:"<<endl;
     d->print();
-    cout<<endl<<endl<<"Check if the list dcomp matches with d list:"<<endl;
+    cout<<endl<<endl<<"Check if the list d matches with dcomp list:"<<endl;
     if(dcomp->match(*d))
     {
         d->print();cout<<" == "; dcomp->print(); cout<<endl;
@@ -64,10 +64,10 @@ void BANLogicImpl::show()
                               new BanDAtom(SymKey,"Na"),
                               new BanDOperator(BanDOperatorType::concates)
                              });
-    newData2->printRPN();
-    newData2->print();
-    cout<<endl;
-    cout<<endl;
+     newData2->printRPN();
+     newData2->print();
+     cout<<endl;
+     cout<<endl;
 
     newData=new BanDataList({new BanDAtom(Principal,""),
                              new BanDataC(),
@@ -81,47 +81,101 @@ void BANLogicImpl::show()
     cout<<endl;
 
     newData3=new BanDataList({new BanDAtom(Principal,"B"),
-                             new BanDataC(BanDComponentType::bAnyData,
-                             {
-                                new BanDAtom(Principal,"A"),
-                                new BanDAtom(SymKey,"Na"),
-                                new BanDOperator(BanDOperatorType::concates)
-                             }),
-                             new BanDOperator(BanDOperatorType::concates),
-                             new BanDAtom(SymKey,"Kab"),
-                             new BanDOperator(BanDOperatorType::Encryption),
-                            });
+
+                              new BanDataC(BanDComponentType::bAnyData,
+                              {
+                                  new BanDAtom(Principal,"A"),
+                                  new BanDAtom(SymKey,"Na"),
+                                  new BanDOperator(BanDOperatorType::concates)
+                              }),
+                              new BanDOperator(BanDOperatorType::concates),
+                              new BanDAtom(SymKey,"Kab"),
+                              new BanDOperator(BanDOperatorType::Encryption),
+                             });
     newData3->printRPN();
     newData3->print();
     cout<<endl;
     cout<<endl;
+    if(newData3->match(*newData))
+     {
+         newData->print();cout<<" == "; newData3->print(); cout<<endl;
+     }
+     else
+     {
+         newData->print();cout<<"  != "; newData3->print();cout<<endl;
+     }
 
     newData4=new BanDataList({new BanDAtom(Principal,"B"),
-                             new BanDataC(BanDComponentType::bAnyData,
-                             {
-                                new BanDAtom(Principal,"A"),
-                                new BanDAtom(SymKey,"Na"),
-                                new BanDOperator(BanDOperatorType::concates)
-                             }),
                               new BanDataC(BanDComponentType::bAnyData,
                               {
-                                 new BanDAtom(Principal,"S"),
-                                 new BanDAtom(SymKey,"Kas"),
-                                  new BanDOperator(BanDOperatorType::Encryption),
+                                  new BanDAtom(Principal,"A"),
+                                  new BanDAtom(SymKey,"Na"),
+                                  new BanDOperator(BanDOperatorType::concates)
                               }),
                               new BanDOperator(BanDOperatorType::concates),
-                             new BanDOperator(BanDOperatorType::concates),
-                             new BanDAtom(SymKey,"Kab"),
-                             new BanDOperator(BanDOperatorType::Encryption),
-                            });
+                              new BanDAtom(SymKey,"Kab"),
+                              new BanDOperator(BanDOperatorType::Encryption),
+                             });
     newData4->printRPN();
     newData4->print();
     cout<<endl;
     cout<<endl;
+    */
+
+    BanDataList *pm1=new BanDataList({
+                                       new BanDAtom(Principal,"A"),
+                                         new BanDAtom(Principal,"A"),
+                                         new BanDAtom(Principal,"Na"),
+                                         new BanDOperator(BanDOperatorType::concates),
+                                         new BanDAtom(PrivKey,"Ka+"),
+                                         new BanDOperator(BanDOperatorType::Encryption),
+                                         new BanDOperator(BanDOperatorType::concates),
+                                         new BanDAtom(SymKey,"Kab"),
+                                         new BanDOperator(BanDOperatorType::Encryption)
+                                     });
+    BanDataList *pm2=new BanDataList({
+                                       new BanDAtom(Principal,"A"),
+                                         new BanDataC(),
+                                         new BanDOperator(BanDOperatorType::concates),
+                                         new BanDAtom(SymKey,"Kab"),
+                                         new BanDOperator(BanDOperatorType::Encryption)
+                                     });
+
+    cout<<"Before unification print pm2 in rpn and infix:"<<endl;
+    pm2->printRPN();
+    cout<<endl<<endl;
+    pm2->print();
+    cout<<endl<<endl<<endl<<endl;
+    cout<<"Before unification print pm1 in rpn and infix:"<<endl;
+    pm1->printRPN();
+    cout<<endl<<endl;
+    pm1->print();
+    cout<<endl<<endl<<endl<<endl;
+    cout<<"check if pm1 matches pm2 in infix:"<<endl;
+    if(pm2->match(*pm1))
+    {
+        pm2->print();
+        cout<<"   "<<"=="<<"  ";
+        pm1->print();
+    }
+    else
+    {
+        pm2->print();
+        cout<<"   "<<"!="<<"  ";
+        pm1->print();
+    }
+
+    if(pm2->unify(*pm1))
+    {
+        cout<<"After unification print pm2 in rpn and infix:"<<endl;
+        pm2->printRPN(); pm2->print();
+        cout<<endl<<endl<<"After unification print dcom in rpn and infix:"<<endl;
+        pm1->printRPN();pm1->print();
+    }
 
 
     //-------------------------------------------------------------------------------------------------
-
+    /*
     QList<BanDComponent*> datalis;
     QList<BanSComponent*> stList;
     datalis.append(new BanDAtom(Principal,"A"));
@@ -165,7 +219,7 @@ void BANLogicImpl::show()
     cout<<"Printing the multiple Statements inside  statment in Infix notation:"<<endl;
     sscompt1->print();
     cout<<endl;
-
+*/
 }
 
 

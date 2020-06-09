@@ -24,6 +24,7 @@ public:
     virtual bool match(BanDComponent *value)=0;
     virtual bool unify(BanDComponent *value)=0;
     virtual bool getIfMatches() const=0;
+    virtual void setInstantiate(bool value)=0;
 };
 }
 

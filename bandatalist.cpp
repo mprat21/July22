@@ -16,19 +16,20 @@ void BANLogic::BanDataList::printRPN()
 
 void BANLogic::BanDataList::print()
 {      
-    BanDataList *mybn=new BanDataList(this->getDataList());
-
-    foreach(QString val,mybn->getPrintStack())
+    BanDataList *d=new BanDataList(this->getDataList());
+    foreach(QString val,d->getPrintStack())
     {
         QTextStream(stdout)<<val;
     }
+}
+
 /*
     foreach(QString val,this->getPrintStack())
     {
         QTextStream(stdout)<<val;
     }
     */
-}
+
 
 QList<BanDComponent *> BANLogic::BanDataList::getDataList()
 {
@@ -103,7 +104,9 @@ BANLogic::BanDataList::BanDataList(QList<BanDComponent *> dList):BanSComponent(B
         case BanDComponentType::bAnyData:
         {
             BanDataC * bdata = dynamic_cast<BanDataC *>(ptr);
-            if(bdata->getMyListdata().size()<=1)
+            //BanDataC * bdata1 = new BanDataC(BanDComponentType::bAnyData,bdata->getMyListdata());
+
+            if(!bdata->getMyListdata().isEmpty())
             {
                 this->printStack.push(ptr->getID());
                 this->instantiate=true;
@@ -125,7 +128,6 @@ BANLogic::BanDataList::BanDataList(QList<BanDComponent *> dList):BanSComponent(B
 
 bool BANLogic::BanDataList::match(BanSComponent &Scomp)
 {
-    int count=0;
     switch(Scomp.getStype())
     {
     case BanSComponentType::bData:
@@ -163,29 +165,126 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
                     }
                     case BanDComponentType::bAnyData:
                     {
-                        BanDataList *dL= new BanDataList(this->getDataList());
-                        QTextStream(stdout)<<dL->getID();
-                        break;
+                        BanDataC *d1=dynamic_cast<BanDataC *>(this->getDataList().value(i));
+                        BanDataC *d2=dynamic_cast<BanDataC *>(data.getDataList().value(i));
+                        if(d1->getDtype()==d2->getDtype())
+                        {
+                            if(d1->match(d2))
+                                ifMatches=true;
+                            else ifMatches=false;
+                        }
                     }
                     }
                 }
-                else
+
+            }
+        }
+        else if(this->getDataList().size()!=data.getDataList().size())
+        {
+            foreach(BanDComponent *ptr, this->getDataList())
+            {
+                switch(ptr->getDtype())
                 {
-                    if(this->getInstantiate()==false)
+                case BanDComponentType::bAtom:
+                {
+                    BanDAtom *atom1=dynamic_cast<BanDAtom *>(ptr);
+                    if(!data.getDataList().isEmpty())
                     {
-                        foreach(BanDComponent *ptr, data.getDataList())
+                        foreach(BanDComponent *ptr2, data.getDataList())
                         {
-                            BanDataList *d1=dynamic_cast<BanDataList *>(ptr);
-                            //d1->getPrintStack().pop();
+                            if(ptr2->getDtype()==BanDComponentType::bAtom)
+                            {
+                                BanDAtom *atom2=dynamic_cast<BanDAtom *>(ptr2);
+                                if(atom1->match(atom2))
+                                    ifMatches=true;
+                                else ifMatches=false;
+                            }
+                            else if(ptr2->getDtype()==BanDComponentType::bOperator)
+                                ifMatches=false;
+                            else if(ptr2->getDtype()==BanDComponentType::bAnyData)
+                            {
+                                BanDataC *ad2=dynamic_cast<BanDataC *>(ptr2);
+                                if(atom1->match(ad2))
+                                    ifMatches=true;
+                                else ifMatches=false;
+                            }
+                        }
 
-                            //this->dataID=ptr->
-
+                    }
+                    break;
+                }
+                case BanDComponentType::bAnyData:
+                {
+                    BanDataC *datac1=dynamic_cast<BanDataC *>(ptr);
+                    if(!data.getDataList().isEmpty())
+                    {
+                        foreach(BanDComponent *ptr2, data.getDataList())
+                        {
+                            if(ptr2->getDtype()==BanDComponentType::bAtom)
+                            {
+                                BanDAtom *atom2=dynamic_cast<BanDAtom *>(ptr2);
+                                if(datac1->match(atom2))
+                                    ifMatches=true;
+                                else ifMatches=false;
+                            }
+                            else if(ptr2->getDtype()==BanDComponentType::bOperator)
+                            {
+                                BanDOperator *oper1=dynamic_cast<BanDOperator *>(ptr2);
+                                if(datac1->match(oper1))
+                                    ifMatches=true;
+                                else ifMatches=false;                            }
+                            else if(ptr2->getDtype()==BanDComponentType::bAnyData)
+                            {
+                                BanDataC *datac2=dynamic_cast<BanDataC *>(ptr2);
+                                if(datac1->match(datac2))
+                                    ifMatches=true;
+                                else ifMatches=false;
+                            }
                         }
                     }
-                    //else if(data.getInstantiate()==false)
+                    break;
+                }
+                case BanDComponentType::bOperator:
+                {
+                    BanDOperator *oper1=dynamic_cast<BanDOperator *>(ptr);
+                    if(!data.getDataList().isEmpty())
+                    {
+                        foreach(BanDComponent *ptr2, data.getDataList())
+                        {
+                            if(ptr2->getDtype()==BanDComponentType::bAtom)
+                            {
+                                ifMatches=false;
+                            }
+                            else if(ptr2->getDtype()==BanDComponentType::bOperator)
+                            {
+                                BanDOperator *oper2=dynamic_cast<BanDOperator *>(ptr2);
+                                if(oper1->match(oper2))
+                                    ifMatches=true;
+                                else ifMatches=false;                            }
+                            else if(ptr2->getDtype()==BanDComponentType::bAnyData)
+                            {
+                                BanDataC *datac2=dynamic_cast<BanDataC *>(ptr2);
+                                if(oper1->match(datac2))
+                                    ifMatches=true;
+                                else ifMatches=false;
+                            }
+                        }
+                    }
+                    break;
+                }
                 }
             }
         }
+        break;
+    }
+    case BanSComponentType::bSOperator:
+    {
+        ifMatches=false;
+        break;
+    }
+    case BanSComponentType::bStatement:
+    {
+        ifMatches=false;
         break;
     }
     }
@@ -210,11 +309,20 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                 {
                     BanDAtom *atom1=dynamic_cast<BanDAtom*>(this->getDataList().value(i));
                     BanDAtom *atom2=dynamic_cast<BanDAtom*>(data.getDataList().value(i));
-                    bool unifies=atom1->unify(atom2);
+                    unifies=atom1->unify(atom2);
                     if(unifies)
                     {
-                        this->getDataList().replace(i,data.getDataList().value(i));
+                        if(atom1->getInstantiate()==false)
+                        {
+                            //atom1->setId(atom2->getID());
+                            this->getDataList().replace(i,data.getDataList().value(i));
+                        }
+                        else if(atom2->getInstantiate()==false)
+                        {
+                            //atom2->setId(atom1->getID());
 
+                            data.dataList.replace(i,this->dataList.value(i));
+                        }
                     }
                     break;
                 }
@@ -222,10 +330,13 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                 {
                     BanDOperator *operator1=dynamic_cast<BanDOperator *>(this->getDataList().value(i));
                     BanDOperator *operator2=dynamic_cast<BanDOperator *>(data.getDataList().value(i));
-                    bool unifies=operator1->unify(operator2);
+                    unifies=operator1->unify(operator2);
                     if(unifies)
                     {
-                        this->getDataList().replace(i,data.getDataList().value(i));
+                        if(operator1->getInstantiate()==false)
+                            this->getDataList().replace(i,data.getDataList().value(i));
+                        else if(operator2->getInstantiate()==false)
+                            data.getDataList().replace(i,this->getDataList().value(i));
                     }
                     break;
                 }

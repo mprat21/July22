@@ -10,6 +10,11 @@ bool BanDComponent::getIfMatches() const
     return ifMatches;
 }
 
+void BanDComponent::setInstantiate(bool value)
+{
+    instantiate = value;
+}
+
 BANLogic::BanDComponent::BanDComponent()
 {
 }
