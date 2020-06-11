@@ -116,7 +116,7 @@ cout<<endl;
     }
 
     //-------------------------------------------------------------------------------------------------
-
+/*
     QList<BanDComponent*> datalis;
     QList<BanSComponent*> stList;
     datalis.append(new BanDAtom(Principal,"A"));
@@ -160,7 +160,7 @@ cout<<endl;
     cout<<"Printing the multiple Statements inside  statment in Infix notation:"<<endl;
     sscompt1->print();
     cout<<endl;
-
+*/
 }
 
 
