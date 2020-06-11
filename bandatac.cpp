@@ -19,30 +19,6 @@ BANLogic::BanDataC::BanDataC():BanDComponent(BanDComponentType::bAnyData)
     }
 }
 
-BANLogic::BanDataC::BanDataC(BanDComponentType type, QList<BANLogic::BanDComponent *> lists):BanDComponent(BanDComponentType::bAnyData)
-{
-    this->myListdata=lists;
-    if(this->myListdata.isEmpty())
-    {
-        this->setId(QString("_D_%1").arg(dataCount++));
-        this->setDtype("bAnyData");
-        this->setInstantiate(false);
-        myListdata.append(this);
-        printQStack.push(this->getID());
-    }
-    else{
-        foreach(BanDComponent *d,this->myListdata)
-        {       BanDataList *dataList1=new BanDataList(this->myListdata);
-            foreach(QString val,dataList1->getPrintStack())
-            {
-                this->setId(val);
-                this->printQStack.push(val);
-                this->instantiate=true;
-            }
-        }
-    }
-}
-
 void BANLogic::BanDataC::setDtype(QString dType)
 {
     if(dType=="bAnyData")
@@ -64,8 +40,8 @@ void BANLogic::BanDataC::print()
 {
     foreach(BanDComponent *ptr,this->myListdata)
     {
-        //ptr->print();
-        QTextStream(stdout)<<ptr->getID();
+        ptr->print();
+        //QTextStream(stdout)<<ptr->getID();
     }
 }
 
@@ -76,7 +52,6 @@ bool BANLogic::BanDataC::getInstantiate() const
 
 bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
 {
-    ifMatches=false;
     BanDComponentType ty1= this->getDtype();
     BanDComponentType ty2= val->getDtype();
     if(ty1==ty2)
@@ -113,7 +88,7 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
                 case BanDComponentType::bOperator:
                 {
                     if(val->getInstantiate()==true)
-                        ifMatches=true;
+                        ifMatches=false;
                     break;
                 }
                 case BanDComponentType::bAnyData:
@@ -124,7 +99,6 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
                 }
                 }
             }
-            ifMatches=false;
         }
         else if(ty2==BanDComponentType::bAnyData)
         {
@@ -141,7 +115,7 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
                 case BanDComponentType::bOperator:
                 {
                     if(this->getInstantiate()==true)
-                        ifMatches=true;
+                        ifMatches=false;
                     break;
                 }
                 case BanDComponentType::bAnyData:
@@ -151,13 +125,7 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
                     break;
                 }
                 }
-                ifMatches=false;
             }
-        }
-        else
-        {
-            if(this->match(val))
-                ifMatches=true;
         }
     }
     return ifMatches;
@@ -165,6 +133,17 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
 
 bool BANLogic::BanDataC::unify(BANLogic::BanDComponent *value)
 {
+    BanDataC *comp1=dynamic_cast<BanDataC *>(this);
+
+    if(value->getDtype()==BanDComponentType::bAtom)
+    {
+        if(comp1->getInstantiate()==false)
+        {
+            this->setId(comp1->getID());
+            comp1->getMyListdata().append(value);
+            unifies=true;
+        }
+    }
     return unifies;
 }
 

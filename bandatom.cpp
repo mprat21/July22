@@ -42,32 +42,30 @@ bool BANLogic::BanDAtom::match(BanDComponent *value)
     if(this->getDtype()==BanDComponentType::bAtom && value->getDtype()==BanDComponentType::bAtom)
     {
         BanDAtom *bad = dynamic_cast<BanDAtom *>(value);
-        if(this->getAtype()==bad->getAtype() && this->getID()==bad->getID())
-            ifMatches= true;
-        else if(this->instantiate && bad->instantiate)
+        if(this->getAtype()==bad->getAtype() && this->instantiate==bad->instantiate)
         {
-            if(this->getID()==(bad->getID()))
-                ifMatches= true;
+            if(this->getID()==bad->getID())
+                this->ifMatches= true;
+            else
+                this->ifMatches= false;
         }
         else if(this->getAtype()==bad->getAtype())
         {
-            if(this->instantiate || bad->instantiate)
-                ifMatches= true;
+            if(this->instantiate== false && bad->instantiate==true)
+                this->ifMatches= true;
+            else if(this->instantiate== true && bad->instantiate==false)
+                this->ifMatches= true;
+            else this->ifMatches= false;
         }
     }
     else if(this->getDtype()==BanDComponentType::bAtom && value->getDtype()==BanDComponentType::bAnyData)
     {
         if(this->getInstantiate()==true && value->getInstantiate()==false)
-            ifMatches=true;
+            this->ifMatches=true;
+        else this->ifMatches=false;
     }
-    else if(this->getDtype()==BanDComponentType::bAnyData && value->getDtype()==BanDComponentType::bAtom)
-    {
-        if(this->getInstantiate()==false && value->getInstantiate()==true)
-            ifMatches=true;
-    }
-    else ifMatches=false;
-
-    return ifMatches;
+    else this->ifMatches=false;
+    return this->ifMatches;
 }
 
 bool BANLogic::BanDAtom::unify(BanDComponent *value)
@@ -84,43 +82,33 @@ bool BANLogic::BanDAtom::unify(BanDComponent *value)
                 {
                     QTextStream(stdout)<<this->getID()<<" = " <<value->getID() <<endl;
                     this->setId(value->getID());
-                    unifies=true;
+                    this->unifies=true;
                 }
                 else if(this->getInstantiate()==true && value->getInstantiate()==false)
                 {
                     QTextStream(stdout) << value->getID()<<" = "<<this->getID() <<endl;
-                    this->setId(this->getID());
-                    unifies=true;
+                    value->setId(this->getID());
+                    this->unifies=true;
                 }
-                else
-                    cout<<"Both are either fully instantiated or both are free";
             }
+            else if(this->getID()==value->getID()) this->unifies=true;
             break;
         }
         case BanDComponentType::bOperator:
         {
-            unifies=false;
+            this->unifies=false;
             break;
         }
         case BanDComponentType::bAnyData:
         {
-            if(this->getDtype()==BanDComponentType::bAtom && value->getDtype()==BanDComponentType::bAnyData)
-            {
-                unifies=true;
-                value->setId(this->getID());
-
-            }
-            else if(this->getDtype()==BanDComponentType::bAnyData && value->getDtype()==BanDComponentType::bAtom)
-            {
-                unifies=true;
-                this->setId(value->getID());
-            }
+            this->unifies=true;
+            value->setId(this->getID());
+            QTextStream(stdout) << value->getID()<<" = "<<this->getID() <<endl;
             break;
         }
-
         }
     }
-    return unifies;
+    return this->unifies;
 }
 
 void BANLogic::BanDAtom::setId(const QString &value)

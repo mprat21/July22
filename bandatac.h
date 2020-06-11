@@ -16,7 +16,6 @@ protected:
 
 public:
     BanDataC();
-    BanDataC(BanDComponentType type,QList<BanDComponent*> lists);
     virtual void setDtype(QString dType) override;
     virtual void setId(const QString &value) override;
     virtual QString getID() override;

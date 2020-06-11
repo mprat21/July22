@@ -36,11 +36,11 @@ void BANLogic::BanDOperator::setDtype(QString oVal)
 
 bool BANLogic::BanDOperator::match(BanDComponent *value)
 {
-    BanDOperator * dop = dynamic_cast<BanDOperator *>(value);
-    if(this->getID().toStdString()==(dop->getID().toStdString()))
-        return true;
-    else
-        return false;
+    if(this->getID()==(value->getID()))
+    {
+        this->ifMatches=true;
+    }else this->ifMatches=false;
+        return this->ifMatches;
 }
 
 bool BANLogic::BanDOperator::unify(BanDComponent *value)
@@ -51,6 +51,7 @@ bool BANLogic::BanDOperator::unify(BanDComponent *value)
         {
         case BanDComponentType::bAtom:
         {
+            this->unifies=false;
             break;
         }
         case BanDComponentType::bOperator:
@@ -61,16 +62,24 @@ bool BANLogic::BanDOperator::unify(BanDComponent *value)
                 if(this->getInstantiate()==true && bop->getInstantiate()==false)
                 {
                     QTextStream(stdout) <<this->getID();
+                    this->unifies=true;
                 }
                 else if(bop->getInstantiate()==true && this->getInstantiate()==false)
                 {
                     QTextStream(stdout) <<bop->getID();
+                    this->unifies=true;
                 }
             }
+            break;
+        }
+        case BanDComponentType::bAnyData:
+        {
+            this->unifies=false;
+            break;
         }
         }
     }
-    return false;
+    return this->unifies;
 }
 
 void BANLogic::BanDOperator::setAdtype(const BanDOperatorType &value)
@@ -104,26 +113,32 @@ BANLogic::BanDOperator::BanDOperator(BanDOperatorType adTy):BanDComponent(BanDCo
     {
     case BanDOperatorType::concates:{
         oValue=" concates ";
+        this->instantiate=true;
         break;
     }
     case BanDOperatorType::Encryption:{
         oValue="encryptedby";
+        this->instantiate=true;
         break;
     }
     case BanDOperatorType::FreshData:{
         oValue="fresh";
+        this->instantiate=true;
         break;
     }
     case BanDOperatorType::ShareKey:{
         oValue="shared Key";
+        this->instantiate=true;
         break;
     }
     case BanDOperatorType::ShareSecret:{
         oValue="share secret";
+        this->instantiate=true;
         break;
     }
     case BanDOperatorType::HashKey:{
         oValue="Hash";
+        this->instantiate=true;
         break;
     }
     default:
@@ -131,7 +146,6 @@ BANLogic::BanDOperator::BanDOperator(BanDOperatorType adTy):BanDComponent(BanDCo
         oValue="";
         instantiate=false;
     }
-        instantiate=true;
     }
 
 }
