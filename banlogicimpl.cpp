@@ -30,13 +30,6 @@ void BANLogicImpl::show()
                             new BanDOperator(BanDOperatorType::Encryption)
                         });
 
-    if(pm1->match(*pm2))
-    {
-        cout<<"matched";
-    }
-
-
-
     d=new BanDataList({
                           new BanDAtom(Principal,""), new BanDAtom(Principal,""),
                           new BanDAtom(Nonce,"Na"), new BanDOperator(BanDOperatorType::concates),
@@ -73,18 +66,12 @@ void BANLogicImpl::show()
                                  new BanDOperator(BanDOperatorType::Encryption),
                              });
 
-    if(newData1->match(*newData2))
-    {
-        cout<<"matched";
-    }
-
-
 cout<<endl;
 
     newData3=new BanDataList({
-                                 new BanDAtom(Principal,"A"),
+                                 new BanDAtom(Principal,""),
                                  new BanDataC(),
-                                 new BanDAtom(Principal,"P"),
+                                 new BanDAtom(Principal,""),
                                  new BanDOperator(BanDOperatorType::concates),
                                  new BanDAtom(SymKey,"Kap"),
                                  new BanDOperator(BanDOperatorType::Encryption),
@@ -98,21 +85,43 @@ cout<<endl;
                                  new BanDAtom(PrivKey,"Ka+"),
                                  new BanDOperator(BanDOperatorType::Encryption),
                                  new BanDOperator(BanDOperatorType::concates),
-                                 new BanDAtom(Principal,"P"),
+                                 new BanDAtom(Principal,"L"),
                                  new BanDOperator(BanDOperatorType::concates),
                                  new BanDAtom(SymKey,"Kap"),
                                  new BanDOperator(BanDOperatorType::Encryption),
                              });
+    cout<<endl<<"Before unification newdata3"<<endl;
+    newData3->print();
+    cout<<endl<<"Before unification newdata4"<<endl;
 
-    if(newData3->match(*newData4))
+    newData4->print();
+
+//    if(newData3->match(*newData4))
+//    {
+//        cout<<endl;
+//        newData3->print();
+//        cout<<"    matches    ";
+//        newData4->print();
+//    }
+//    else
+//    {
+//        cout<<endl;
+//        newData3->print(); cout<<"  does not  matches    ";newData4->print();
+//    }
+
+    cout<<endl<<"After unification:  "<<endl;
+    if(newData3->unify(*newData4))
     {
         cout<<endl;
-        newData3->print(); cout<<"    matches    ";newData4->print();
+        newData3->printRPN();
+        //newData3->print();
+
+        //newData3->print(); cout<<"    unifies    ";newData4->print();
     }
     else
     {
         cout<<endl;
-        newData3->print(); cout<<"  does not  matches    ";newData4->print();
+        newData3->print(); cout<<"  does not  unify    ";newData4->print();
     }
 
     //-------------------------------------------------------------------------------------------------

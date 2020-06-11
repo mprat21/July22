@@ -15,7 +15,6 @@ BANLogic::BanDataC::BanDataC():BanDComponent(BanDComponentType::bAnyData)
         this->instantiate=false;
         myListdata.append(this);
         printQStack.push(this->getID());
-
     }
 }
 
@@ -38,10 +37,12 @@ QString BANLogic::BanDataC::getID()
 
 void BANLogic::BanDataC::print()
 {
-    foreach(BanDComponent *ptr,this->myListdata)
+    //BanDataC *comp1=dynamic_cast<BanDataC *>(this);
+
+    foreach(BanDComponent *ptr,this->getMyListdata())
     {
         ptr->print();
-        //QTextStream(stdout)<<ptr->getID();
+       // QTextStream(stdout)<<ptr->getID();
     }
 }
 
@@ -128,19 +129,44 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
             }
         }
     }
+   // this->dataValue=printQStack.top();
     return ifMatches;
 }
 
 bool BANLogic::BanDataC::unify(BANLogic::BanDComponent *value)
 {
-    BanDataC *comp1=dynamic_cast<BanDataC *>(this);
-
+    myListdata.removeOne(this);
+    printQStack.clear();
+    //this->getMyListdata().pop_back();
     if(value->getDtype()==BanDComponentType::bAtom)
     {
-        if(comp1->getInstantiate()==false)
+        BanDAtom *comp2=dynamic_cast<BanDAtom *>(value);
+        if(comp2->getInstantiate()==true)
+        {
+
+            this->myListdata.append(comp2);
+            this->printQStack.push(comp2->getID());
+            unifies=true;
+        }
+    }
+    else if(value->getDtype()==BanDComponentType::bOperator)
+    {
+        BanDOperator *comp2=dynamic_cast<BanDOperator *>(value);
+
+        if(comp2->getInstantiate()==true)
+        {
+            this->myListdata.append(comp2);
+            this->printQStack.push(comp2->getID());
+            unifies=false;
+        }
+    }
+    else if(value->getDtype()==BanDComponentType::bAnyData)
+    {
+        BanDataC *comp1=dynamic_cast<BanDataC *>(this);
+        if(value->getInstantiate()==true)
         {
             this->setId(comp1->getID());
-            comp1->getMyListdata().append(value);
+            this->getMyListdata().append(value);
             unifies=true;
         }
     }

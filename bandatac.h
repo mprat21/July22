@@ -12,10 +12,12 @@ protected:
     QString dataValue;
     QList<BanDComponent*> myListdata;
     QStack<QString> printQStack;
+    BanDataList *dList;
 
 
 public:
     BanDataC();
+   // BanDataC(QList<BanDComponent*> dList1);
     virtual void setDtype(QString dType) override;
     virtual void setId(const QString &value) override;
     virtual QString getID() override;

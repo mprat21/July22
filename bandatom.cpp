@@ -91,7 +91,11 @@ bool BANLogic::BanDAtom::unify(BanDComponent *value)
                     this->unifies=true;
                 }
             }
-            else if(this->getID()==value->getID()) this->unifies=true;
+            else if(this->getID()==value->getID())
+            {
+                value->setId(this->getID());
+                this->unifies=true;
+            }
             break;
         }
         case BanDComponentType::bOperator:
@@ -101,10 +105,13 @@ bool BANLogic::BanDAtom::unify(BanDComponent *value)
         }
         case BanDComponentType::bAnyData:
         {
-            this->unifies=true;
-            value->setId(this->getID());
-            QTextStream(stdout) << value->getID()<<" = "<<this->getID() <<endl;
-            break;
+            if(value->getInstantiate()==false)
+            {
+                this->unifies=true;
+                value->setId(this->getID());
+                QTextStream(stdout) << value->getID()<<" = "<<this->getID() <<endl;
+                break;
+            }
         }
         }
     }

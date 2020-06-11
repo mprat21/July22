@@ -17,22 +17,14 @@ void BANLogic::BanDataList::printRPN()
 }
 
 void BANLogic::BanDataList::print()
-{      
+{
     BanDataList *d=new BanDataList(this->getDataList());
+
     foreach(QString val,d->getPrintStack())
     {
         QTextStream(stdout)<<val;
     }
 }
-
-/*
-    foreach(QString val,this->getPrintStack())
-    {
-        QTextStream(stdout)<<val;
-    }
-    */
-
-
 QList<BanDComponent *> BANLogic::BanDataList::getDataList()
 {
     return dataList;
@@ -179,7 +171,6 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
                     }
                     }
                 }
-
             }
         }
         else if(this->getDataList().size()!=data.getDataList().size())
@@ -188,7 +179,7 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
             QList<BanDComponent*> mylist2=data.getDataList();
             QList<BanDComponent*> temp;
 
-            int i, mycount=0, juno=0;
+            int i, mycount=0, juno=0,dataTypeIndex=0;
             for(i=0;i<mylist1.size();i++)
             {
                 if(mylist2.value(juno)->getDtype()==mylist1.value(i)->getDtype())
@@ -204,13 +195,15 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
                         ifMatches=false;
                         break;
                     }
-
-
                 }
                 else if(mylist2.value(i)->getDtype()!=mylist1.value(i)->getDtype())
                 {
                     if(mylist1.value(i)->getDtype()==BanDComponentType::bAnyData)
                     {
+                        //saving the index of AnyData
+                        if(mylist1.at(i)->getDtype()==BanDComponentType::bAnyData)
+                        {dataTypeIndex=i;}
+
                         for(int j=i; j<=mylist2.size()-(mylist1.size()-i);j++)
                         {
                             juno=j;
@@ -227,16 +220,14 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
                                 //break;
                             }
                             juno++;
-
-
                         }
                     }
-
                 }
             }
-            foreach(BanDComponent *lo,temp )
+             QTextStream(stdout)<<this->getDataList().at(dataTypeIndex)->getID()<< " =  ";
+            foreach(BanDComponent *lo, temp  )
             {
-                lo->print();
+                QTextStream(stdout) <<lo->getID()+" , "<<flush;
             }
         }
         break;
@@ -274,8 +265,7 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                     {
                         BanDAtom *atom1=dynamic_cast<BanDAtom*>(this->getDataList().value(i));
                         BanDAtom *atom2=dynamic_cast<BanDAtom*>(data.getDataList().value(i));
-                        unifies=atom1->unify(atom2);
-                        if(unifies)
+                        if(atom1->unify(atom2))
                         {
                             if(atom1->getInstantiate()==false)
                             {
@@ -296,8 +286,7 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                     {
                         BanDOperator *operator1=dynamic_cast<BanDOperator *>(this->getDataList().value(i));
                         BanDOperator *operator2=dynamic_cast<BanDOperator *>(data.getDataList().value(i));
-                        unifies=operator1->unify(operator2);
-                        if(unifies)
+                        if(operator1->unify(operator2))
                         {
                             if(operator1->getInstantiate()==false)
                             {
@@ -312,35 +301,94 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                         }
                         break;
                     }
+                    case BanDComponentType::bAnyData:{
+                        BanDataC *dataany1=dynamic_cast<BanDataC *>(this->getDataList().value(i));
+                        if(data.getDataList().value(i)->getDtype()==BanDComponentType::bAtom)
+                        {
+                            BanDAtom *atom2=dynamic_cast<BanDAtom*>(this->getDataList().value(i));
+
+                            if(dataany1->unify(atom2))
+                            {
+                                this->getDataList().replace(i,data.getDataList().value(i));
+                                unifies=true;
+                            }
+                        }
+                        else if(data.getDataList().value(i)->getDtype()==BanDComponentType::bOperator)
+                        {
+                            BanDOperator *op2=dynamic_cast<BanDOperator*>(this->getDataList().value(i));
+
+                            if(dataany1->unify(op2))
+                            {
+                                //this->getDataList().replace(i,data.getDataList().value(i));
+                                unifies=false;
+                            }
+                        }
+                        else if(data.getDataList().value(i)->getDtype()==BanDComponentType::bAnyData)
+                        {
+                            BanDataC *anyd2=dynamic_cast<BanDataC*>(this->getDataList().value(i));
+
+                            if(dataany1->unify(anyd2))
+                            {
+                                //this->getDataList().replace(i,data.getDataList().value(i));
+                                unifies=false;
+                            }
+                        }
+                        break;
+                    }
                     }
                 }
-
             }
             else if(this->getDataList().size()!=data.getDataList().size())
             {
-                int len1= this->getDataList().size();
-                int len2= data.getDataList().size();
-                int i,j;
-                for(i=0;i<len2;i++)
-                {
-                    BanDComponent *comp1=dynamic_cast<BanDComponent *>(this->getDataList().value(i));
-                    BanDComponent *comp2=dynamic_cast<BanDComponent *>(data.getDataList().value(i));
-                    if(comp1->match(comp2))
-                    {
-                        unifies=true;
-                        this->getDataList().replace(i,data.getDataList().value(i));
-                    }
-                    else if(comp1->getDtype()==BanDComponentType::bAnyData)
-                    {
-                        for(j=i;j<len2;i++,j++)
-                        {
-                            this->getDataList().insert(j,data.getDataList().value(j));
+                QList<BanDComponent*> mylist1=this->getDataList();
+                QList<BanDComponent*> mylist2=data.getDataList();
+                QList<BanDComponent*> temp;
 
-                        }
-                        if(this->getDataList().value(i)==this->getDataList().value(i))
+                int i, mycount=0, juno=0;
+                for(i=0;i<mylist1.size();i++)
+                {
+                    if(mylist2.value(juno)->getDtype()==this->getDataList().value(i)->getDtype())
+                    {
+                        if(this->getDataList().value(i)->unify(mylist2.value(juno)))
                         {
                             unifies=true;
+                            //temp.append(mylist2.value(juno));
+                            //this->getDataList().replace(i,mylist2.value(juno));
+                            mycount++;
+                            juno++;
                         }
+                        else
+                        {
+                            juno++;
+                            unifies=false;
+                            break;
+                        }
+                    }
+                    else if(mylist2.value(i)->getDtype()!=this->getDataList().value(i)->getDtype())
+                    {
+                        if(this->getDataList().value(i)->getDtype()==BanDComponentType::bAnyData)
+                        {
+
+                            for(int j=i; j<=mylist2.size()-(mylist1.size()-i);j++)
+                            {
+                                juno=j;
+
+                                if(this->getDataList().value(i)->unify(mylist2.value(j)))
+                                {
+                                    if(this->getDataList().value(i)->getDtype()==BanDComponentType::bAnyData)
+                                    {
+                                        //this->getDataList().removeAt(i);
+                                        temp.append(mylist2.value(j));
+                                      //  this->getDataList().reserve(temp.size());
+                                        this->getDataList().replace(i,temp.value(j));
+                                        unifies=true;
+                                        mycount++;
+                                   }
+                                }
+                                juno++;
+                            }
+                        }
+
                     }
                 }
             }
@@ -370,5 +418,4 @@ bool BanDataList::getInstantiate() const
 bool BanDataList::getIfMatches() const
 {
     return ifMatches;
-
 }

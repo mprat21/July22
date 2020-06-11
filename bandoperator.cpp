@@ -40,7 +40,7 @@ bool BANLogic::BanDOperator::match(BanDComponent *value)
     {
         this->ifMatches=true;
     }else this->ifMatches=false;
-        return this->ifMatches;
+    return this->ifMatches;
 }
 
 bool BANLogic::BanDOperator::unify(BanDComponent *value)
@@ -57,17 +57,27 @@ bool BANLogic::BanDOperator::unify(BanDComponent *value)
         case BanDComponentType::bOperator:
         {
             BanDOperator *bop = dynamic_cast<BanDOperator *>(value);
-            if(this->getID()!=value->getID())
+            if(this->getID()==value->getID())
+            {
+                this->unifies=true;
+                this->setId(value->getID());
+
+            }
+            else if(this->getID()!=value->getID())
             {
                 if(this->getInstantiate()==true && bop->getInstantiate()==false)
                 {
                     QTextStream(stdout) <<this->getID();
                     this->unifies=true;
+                    this->setId(bop->getID());
+
                 }
                 else if(bop->getInstantiate()==true && this->getInstantiate()==false)
                 {
                     QTextStream(stdout) <<bop->getID();
                     this->unifies=true;
+                    bop->setId(this->getID());
+
                 }
             }
             break;

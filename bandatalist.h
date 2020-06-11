@@ -18,7 +18,6 @@ protected:
     QStack<QString> printStack;
     QList<BanSComponent*> StList;
 
-
 public:
     BanDataList();
     BanDataList(QList<BanDComponent*> dList1);
