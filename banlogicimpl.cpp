@@ -129,14 +129,14 @@ void BANLogicImpl::show()
     }
 
     //-------------------------------------------------------------------------------------------------
-  /*
+
     BanStatementList *stList1;
     BanStatementList *stList2,*stList3;
     BanStatementList* stList4;
     stList1= new BanStatementList({
                                       new BanDataList({new BanDAtom(Principal,"A")}),
                                       new BanDataList({
-                                          new BanDAtom(Principal,"P"), new BanDAtom(Principal,"Q"),
+                                          new BanDAtom(Principal,"P"), new BanDAtom(Principal,"B"),
                                           new BanDAtom(Nonce,"Na"), new BanDOperator(BanDOperatorType::concates),
                                           new BanDAtom(SymKey,"Kab"), new BanDOperator(BanDOperatorType::Encryption),
                                           new BanDAtom(Nonce,"Nb"), new BanDOperator(BanDOperatorType::concates),
@@ -188,8 +188,8 @@ void BANLogicImpl::show()
     cout<<endl<<endl;
 
     stList4 =new BanStatementList({
-                                      new BanDataList({new BanDAtom(Principal,"F")}),
-                                      new BanDataList({new BanDAtom(Principal,"B")}),
+                                      new BanDataList({new BanDAtom(Principal,"C")}),
+                                      new BanDataList({new BanDAtom(Principal,"S")}),
                                       stList2,
                                       new banSOperator(BanSOperatorType::believe),
                                       new banSOperator(BanSOperatorType::conveyed)
@@ -215,8 +215,8 @@ void BANLogicImpl::show()
     stList5->print();
     cout<<endl;
     cout<<endl<<endl;
-    */
 
+/*
          cout<<endl<<endl<<endl;
         QList<BanDComponent*> datalis;
         QList<BanSComponent*> stList;
@@ -259,6 +259,7 @@ void BANLogicImpl::show()
         cout<<"Printing the multiple Statements inside  statment in Infix notation:"<<endl;
         sscompt1->print();
         cout<<endl;
+        */
 }
 
 

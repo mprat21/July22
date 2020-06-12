@@ -28,6 +28,7 @@ public:
     bool getInstantiate() const override;
     bool getIfMatches() const override;
     QList<BanSComponent *> getStList() const;
+    QStack<QString> getPrintStStack() const;
 };
 
 }

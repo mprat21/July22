@@ -5,6 +5,11 @@ QList<BanSComponent *> BanStatementList::getStList() const
     return stList;
 }
 
+QStack<QString> BanStatementList::getPrintStStack() const
+{
+    return printStStack;
+}
+
 BANLogic::BanStatementList::BanStatementList()
 {
 }
@@ -109,8 +114,8 @@ bool BanStatementList::getIfMatches() const
 }
 void BANLogic::BanStatementList::print()
 {
-
-    foreach(QString ptr, printStStack)
+BanStatementList *St=new BanStatementList(this->getStList());
+    foreach(QString ptr, St->getPrintStStack())
     {
         QTextStream(stdout)<<ptr;
     }
