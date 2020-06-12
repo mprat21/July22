@@ -14,7 +14,7 @@ BANLogic::BanDataC::BanDataC():BanDComponent(BanDComponentType::bAnyData)
         this->type=BanDComponentType::bAnyData;
         this->instantiate=false;
         myListdata.append(this);
-        printQStack.push(this->getID());
+        //printQStack.push(this->getID());
     }
 }
 
@@ -26,7 +26,7 @@ void BANLogic::BanDataC::setDtype(QString dType)
 
 void BANLogic::BanDataC::setId(const QString &value)
 {
-    this->dataValue=value;
+    this->dataValue+=value;
 }
 
 QString BANLogic::BanDataC::getID()
@@ -37,12 +37,9 @@ QString BANLogic::BanDataC::getID()
 
 void BANLogic::BanDataC::print()
 {
-    //BanDataC *comp1=dynamic_cast<BanDataC *>(this);
-
-    foreach(BanDComponent *ptr,this->getMyListdata())
+    foreach(QString ptr,this->printQStack)
     {
-        ptr->print();
-       // QTextStream(stdout)<<ptr->getID();
+        QTextStream(stdout)<<ptr;
     }
 }
 
@@ -69,6 +66,10 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
             {
                 ifMatches=true;
             }
+            else if(d1->getInstantiate()==false && d2->getInstantiate()==false)
+            {
+                ifMatches=true;
+            }
             else ifMatches=false;
         }
     }
@@ -82,20 +83,23 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
                 {
                 case BanDComponentType::bAtom:
                 {
-                    if(val->getInstantiate()==true)
+                    if(val->getInstantiate()==true || val->getInstantiate()==false)
                         ifMatches=true;
+                    else ifMatches=false;
                     break;
                 }
                 case BanDComponentType::bOperator:
                 {
-                    if(val->getInstantiate()==true)
+                   // if(val->getInstantiate()==true)
                         ifMatches=false;
+
                     break;
                 }
                 case BanDComponentType::bAnyData:
                 {
                     if(val->getInstantiate()==true)
                         ifMatches=true;
+                    else ifMatches=false;
                     break;
                 }
                 }
@@ -111,11 +115,12 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
                 {
                     if(this->getInstantiate()==true)
                         ifMatches=true;
+                    else ifMatches=false;
                     break;
                 }
                 case BanDComponentType::bOperator:
                 {
-                    if(this->getInstantiate()==true)
+                    //if(this->getInstantiate()==true)
                         ifMatches=false;
                     break;
                 }
@@ -123,6 +128,7 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
                 {
                     if(this->getInstantiate()==true)
                         ifMatches=true;
+                    else ifMatches=false;
                     break;
                 }
                 }
@@ -135,39 +141,74 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
 
 bool BANLogic::BanDataC::unify(BANLogic::BanDComponent *value)
 {
-    myListdata.removeOne(this);
-    printQStack.clear();
-    //this->getMyListdata().pop_back();
-    if(value->getDtype()==BanDComponentType::bAtom)
+    if(this->match(value))
     {
-        BanDAtom *comp2=dynamic_cast<BanDAtom *>(value);
-        if(comp2->getInstantiate()==true)
+        if(value->getDtype()==BanDComponentType::bAtom)
+        {
+            BanDAtom *comp2=dynamic_cast<BanDAtom *>(value);
+            if(comp2->getInstantiate()==true || comp2->getInstantiate()==false)
+            {
+                BanDAtom *atm= new BanDAtom(comp2->getAtype(),comp2->getID());
+                this->myListdata.append(atm);
+                this->printQStack.push(atm->getID());
+                unifies=true;
+            }
+            else unifies=false;
+        }
+        else if(value->getDtype()==BanDComponentType::bOperator)
+        {
+            BanDOperator *comp2=dynamic_cast<BanDOperator *>(value);
+            if(comp2->getInstantiate()==true)
+            {
+                BanDOperator *op= new BanDOperator(comp2->getDOtype());
+                switch (op->getDOtype())
+                {
+                case BanDOperatorType::concates:{
+                    this->printQStack.push(this->printQStack.pop()+","+this->printQStack.pop());
+                     this->myListdata.append(op);
+                    break;
+                }
+                case BanDOperatorType::Encryption:{
+                    this->printQStack.push("{"+this->printQStack.pop()+"}"+this->printQStack.pop());
+                     this->myListdata.append(op);
+
+                    break;
+                }
+                case BanDOperatorType::FreshData:{
+                    this->printQStack.push(this->printQStack.pop()+value->getID()+this->printQStack.pop());
+                    this->myListdata.append(op);
+                    break;
+                }
+                case BanDOperatorType::ShareKey:{
+                    this-> printQStack.push(this->printQStack.pop()+value->getID()+this->printQStack.pop());
+                    this->myListdata.append(op);
+                    break;
+                }
+                case BanDOperatorType::ShareSecret:{
+                    this-> printQStack.push(this->printQStack.pop()+value->getID()+this->printQStack.pop());
+                    break;
+                }
+                case BanDOperatorType::HashKey:{
+                    this-> printQStack.push(this->printQStack.pop()+value->getID()+this->printQStack.pop());
+                    this->myListdata.append(op);
+                    break;
+                }
+                }
+                unifies=false;
+            }
+        }
+        else if(value->getDtype()==BanDComponentType::bAnyData)
         {
 
-            this->myListdata.append(comp2);
-            this->printQStack.push(comp2->getID());
-            unifies=true;
-        }
-    }
-    else if(value->getDtype()==BanDComponentType::bOperator)
-    {
-        BanDOperator *comp2=dynamic_cast<BanDOperator *>(value);
-
-        if(comp2->getInstantiate()==true)
-        {
-            this->myListdata.append(comp2);
-            this->printQStack.push(comp2->getID());
-            unifies=false;
-        }
-    }
-    else if(value->getDtype()==BanDComponentType::bAnyData)
-    {
-        BanDataC *comp1=dynamic_cast<BanDataC *>(this);
-        if(value->getInstantiate()==true)
-        {
-            this->setId(comp1->getID());
-            this->getMyListdata().append(value);
-            unifies=true;
+            BanDataC *comp2=dynamic_cast<BanDataC *>(this);
+            if(comp2->getInstantiate()==true)
+            {
+                BanDataC *atm= new BanDataC();
+                //this->getMyListdata().append(value);
+                unifies=true;
+            }
+            else
+                 unifies=false;
         }
     }
     return unifies;
@@ -185,8 +226,23 @@ QList<BANLogic::BanDComponent *> BANLogic::BanDataC::getMyListdata() const
 
 void BANLogic::BanDataC::printRPN()
 {
-    foreach(BanDComponent *ptr, this->getMyListdata())
+    foreach(BanDComponent *ptr,this->getMyListdata())
     {
-        QTextStream(stdout)<<ptr->getID()<<" ";
+        switch(ptr->getDtype())
+        {
+        case BanDComponentType::bAtom:
+        {
+            BanDAtom *d1=dynamic_cast<BanDAtom *>(ptr);
+            d1->printRPN();
+            break;
+        }
+        case BanDComponentType::bOperator:
+        {
+            BanDOperator *d1=dynamic_cast<BanDOperator *>(ptr);
+            d1->printRPN();
+            break;
+        }
+        }
+        //QTextStream(stdout)<<ptr->getID();
     }
 }

@@ -6,7 +6,7 @@ BanSOperatorType BANLogic::banSOperator::getStOptype() const
 }
 
 
-BANLogic::banSOperator::banSOperator()
+BANLogic::banSOperator::banSOperator():BanSComponent(BanSComponentType::bSOperator)
 {
 
 }
@@ -38,10 +38,6 @@ BANLogic::banSOperator::banSOperator(BanSOperatorType adTy):BanSComponent(BanSCo
     }
 }
 
-void BANLogic::banSOperator::printRPN()
-{
-
-}
 
 BANLogic::banSOperator::~banSOperator()
 {

@@ -10,7 +10,6 @@ protected:
     bool instantiate;
     bool unifies;
     bool ifMatches;
-    QList<BanDComponent*> maindataList;
 
 public:
     BanDComponent();

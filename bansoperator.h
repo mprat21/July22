@@ -15,7 +15,7 @@ public:
     // BanSComponent interface
     virtual QString getID() override{return soValue;}
     virtual void print() override{QTextStream(stdout)<<soValue<<flush;}
-    void printRPN();
+    void printRPN() override{QTextStream(stdout)<<"["+this->soValue+"]"<<flush;}
     BanSOperatorType getStOptype() const;
     virtual ~banSOperator();
     bool getInstantiate () const override;

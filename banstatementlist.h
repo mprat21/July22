@@ -21,12 +21,13 @@ public:
 
     // BanSComponent interface
     virtual void print() override;
-    virtual void printRPN();
+    virtual void printRPN() override;
     virtual QString getID()override{return stid;}
     bool match(BanSComponent &value)override;
     bool unify(BanSComponent &value)override;
     bool getInstantiate() const override;
     bool getIfMatches() const override;
+    QList<BanSComponent *> getStList() const;
 };
 
 }

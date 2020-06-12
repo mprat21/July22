@@ -1,20 +1,25 @@
 #include "banstatementlist.h"
 using namespace BANLogic;
+QList<BanSComponent *> BanStatementList::getStList() const
+{
+    return stList;
+}
+
 BANLogic::BanStatementList::BanStatementList()
 {
 }
 BANLogic::BanStatementList::BanStatementList(QList<BanSComponent *> sList):BanSComponent(BanSComponentType::bStatement)
 {
-    stList=sList;
-    foreach(BanSComponent *ptr, stList)
+    this->stList=sList;
+    foreach(BanSComponent *ptr, this->stList)
     {
         if(ptr->getStype()==BanSComponentType::bData)
         {
             BanDataList *comp1=dynamic_cast<BanDataList *>(ptr);
-            BanDataList *newpt=new BanDataList(comp1->getDataList());
-            foreach(QString ptr, newpt->getPrintStack())
+            // BanDataList *newpt=new BanDataList(comp1->getDataList());
+            foreach(QString ptr, comp1->getPrintStack())
             {
-                printStStack.push(ptr);
+                this->printStStack.push(ptr);
             }
         }
         else if(ptr->getStype()==BanSComponentType::bSOperator)
@@ -23,47 +28,61 @@ BANLogic::BanStatementList::BanStatementList(QList<BanSComponent *> sList):BanSC
             switch (comp1->getStOptype())
             {
             case BanSOperatorType::told:{
-                printStStack.push(printStStack.pop()+comp1->getID()+printStStack.pop());
+                this->printStStack.push(this->printStStack.pop()+comp1->getID()+this->printStStack.pop());
                 break;
             }
             case BanSOperatorType::believe:{
-                printStStack.push(printStStack.pop()+comp1->getID()+printStStack.pop());
+                this->printStStack.push(this->printStStack.pop()+comp1->getID()+this->printStStack.pop());
                 break;
             }
             case BanSOperatorType::possess:{
-                printStStack.push(printStStack.pop()+comp1->getID()+printStStack.pop());
+                this->printStStack.push(this->printStStack.pop()+comp1->getID()+this->printStStack.pop());
                 break;
             }
             case BanSOperatorType::conveyed:{
-                printStStack.push(printStStack.pop()+comp1->getID()+printStStack.pop());
+                this->printStStack.push(this->printStStack.pop()+comp1->getID()+this->printStStack.pop());
                 break;
             }
             case BanSOperatorType::hasJurisdiction:{
-                printStStack.push(printStStack.pop()+comp1->getID()+printStStack.pop());
+                this->printStStack.push(this->printStStack.pop()+comp1->getID()+this->printStStack.pop());
                 break;
             }
             }
         }
         else if(ptr->getStype()==BanSComponentType::bStatement)
         {
-            BanSComponent *comp=new BanStatementList(stList);
+            break;
+
         }
     }
 }
 void BANLogic::BanStatementList::printRPN()
 {
     QTextStream(stdout)<<"{";
-    foreach(BanSComponent *ptr, stList)
+    foreach(BanSComponent *ptr,this->stList)
     {
-        if(ptr->getStype()==BanSComponentType::bData)
+        switch(ptr->getStype())
         {
-            BanDataList *comp1=dynamic_cast<BanDataList *>(ptr);
-            comp1->printRPN();
-        }
-        else
+        case BanSComponentType::bData:
         {
-            ptr->print();
+            BanDataList *d1=dynamic_cast<BanDataList *>(ptr);
+            d1->printRPN();
+            break;
         }
+        case BanSComponentType::bSOperator:
+        {
+            banSOperator *d1=dynamic_cast<banSOperator *>(ptr);
+            d1->printRPN();
+            break;
+        }
+        case BanSComponentType::bStatement:
+        {
+            BanStatementList *d1=dynamic_cast<BanStatementList *>(ptr);
+            d1->printRPN();
+            break;
+        }
+        }
+        //QTextStream(stdout)<<ptr->getID();
     }
     QTextStream(stdout)<<"}";
     cout<<endl<<endl;
@@ -90,9 +109,10 @@ bool BanStatementList::getIfMatches() const
 }
 void BANLogic::BanStatementList::print()
 {
+
     foreach(QString ptr, printStStack)
     {
         QTextStream(stdout)<<ptr;
     }
-    cout<<endl<<endl;
+
 }

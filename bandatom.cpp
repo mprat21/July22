@@ -46,6 +46,8 @@ bool BANLogic::BanDAtom::match(BanDComponent *value)
         {
             if(this->getID()==bad->getID())
                 this->ifMatches= true;
+            else if(this->instantiate== false && bad->instantiate==false)
+                this->ifMatches= true;
             else
                 this->ifMatches= false;
         }
@@ -90,10 +92,16 @@ bool BANLogic::BanDAtom::unify(BanDComponent *value)
                     value->setId(this->getID());
                     this->unifies=true;
                 }
+                else if(this->getInstantiate()==false && value->getInstantiate()==false)
+                {
+                    QTextStream(stdout) << this->getID()<<" = "<<value->getID() <<endl;
+                    this->setId(value->getID());
+                    this->unifies=true;
+                }
             }
             else if(this->getID()==value->getID())
             {
-                value->setId(this->getID());
+                this->setId(value->getID());
                 this->unifies=true;
             }
             break;
@@ -212,6 +220,7 @@ BANLogic::BanDAtom::BanDAtom(banAtomtype aTy, QString aVal):BanDComponent(BanDCo
     else
     {
         this->aValue = aVal;
+        this->atype= aTy;
         instantiate = true;
         atomCount++;
     }
