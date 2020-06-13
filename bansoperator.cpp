@@ -51,12 +51,12 @@ bool BANLogic::banSOperator::getInstantiate() const
 
 bool BANLogic::banSOperator::match(BanSComponent &value)
 {
-    return false;
+    return ifMatches;
 }
 
 bool BANLogic::banSOperator::unify(BanSComponent &value)
 {
-    return false;
+    return unifies;
 }
 
 bool BANLogic::banSOperator::getIfMatches() const

@@ -98,7 +98,7 @@ void BANLogic::BanStatementList::printRPN()
         //QTextStream(stdout)<<ptr->getID();
     }
     QTextStream(stdout)<<"}";
-    cout<<endl<<endl;
+    cout<<endl;
 }
 
 bool BANLogic::BanStatementList::match(BanSComponent &value)

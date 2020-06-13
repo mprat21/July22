@@ -30,9 +30,12 @@ void BANLogic::BanDataList::printRPN()
             break;
         }
         }
+
         //QTextStream(stdout)<<ptr->getID();
     }
     QTextStream(stdout)<<"]";
+    cout<<endl;
+
 }
 
 void BANLogic::BanDataList::print()
