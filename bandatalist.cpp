@@ -6,6 +6,7 @@ int BanDataList::datacount=1;
 void BANLogic::BanDataList::printRPN()
 {
     QTextStream(stdout)<<"[";
+
     foreach(BanDComponent *ptr,this->getDataList())
     {
         switch(ptr->getDtype())
@@ -36,18 +37,10 @@ void BANLogic::BanDataList::printRPN()
 
 void BANLogic::BanDataList::print()
 {
-    //    BanDataList *d=new BanDataList(this->getDataList());
-
-    //    foreach(BanDComponent *val,d->getDataList())
-    //    {
-    //        val->print();
-    //    }
-
     foreach(QString val,this->getPrintStack())
     {
         QTextStream(stdout)<<val;
     }
-
 }
 QList<BanDComponent *> BANLogic::BanDataList::getDataList()
 {
@@ -251,12 +244,12 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
             cout<<endl;
             if(ifMatches)
             {
-            QTextStream(stdout)<<this->getDataList().at(dataTypeIndex)->getID()<< " =  ";
-            foreach(BanDComponent *lo, temp)
-            {
-                QTextStream(stdout) <<lo->getID()+"  "<<flush;
-            }
-            cout<<endl;
+                QTextStream(stdout)<<this->getDataList().at(dataTypeIndex)->getID()<< " =  ";
+                foreach(BanDComponent *lo, temp)
+                {
+                    QTextStream(stdout) <<lo->getID()+"  "<<flush;
+                }
+                cout<<endl;
             }
         }
         break;
@@ -300,7 +293,7 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                         if(atom1->unify(atom2))
                         {
                             temp.append(data.getDataList().value(i));
-                           // mylist1.replace(i,data.getDataList().value(i));
+                            // mylist1.replace(i,data.getDataList().value(i));
                             unifies=true;
                         }
                         else
@@ -318,7 +311,7 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                         if(operator1->unify(operator2))
                         {
                             temp.append(data.getDataList().value(i));
-                           // mylist1.replace(i,data.getDataList().value(i));
+                            // mylist1.replace(i,data.getDataList().value(i));
                             unifies=true;
                         }
                         else
@@ -333,7 +326,7 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                         if(dataany1->unify(mylist2.value(i)))
                         {
                             temp.append(data.getDataList().value(i));
-                          //  mylist1.replace(i,data.getDataList().value(i));
+                            //  mylist1.replace(i,data.getDataList().value(i));
                             unifies=true;
                         }
                         else

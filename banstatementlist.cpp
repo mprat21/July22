@@ -18,16 +18,18 @@ BANLogic::BanStatementList::BanStatementList(QList<BanSComponent *> sList):BanSC
     this->stList=sList;
     foreach(BanSComponent *ptr, this->stList)
     {
-        if(ptr->getStype()==BanSComponentType::bData)
+        switch(ptr->getStype())
+        {
+        case BanSComponentType::bData:
         {
             BanDataList *comp1=dynamic_cast<BanDataList *>(ptr);
-            // BanDataList *newpt=new BanDataList(comp1->getDataList());
             foreach(QString ptr, comp1->getPrintStack())
             {
                 this->printStStack.push(ptr);
             }
+            break;
         }
-        else if(ptr->getStype()==BanSComponentType::bSOperator)
+        case BanSComponentType::bSOperator:
         {
             banSOperator *comp1=dynamic_cast<banSOperator *>(ptr);
             switch (comp1->getStOptype())
@@ -53,11 +55,17 @@ BANLogic::BanStatementList::BanStatementList(QList<BanSComponent *> sList):BanSC
                 break;
             }
             }
-        }
-        else if(ptr->getStype()==BanSComponentType::bStatement)
-        {
             break;
-
+        }
+        case BanSComponentType::bStatement:
+        {
+            BanStatementList *d1=dynamic_cast<BanStatementList *>(ptr);
+            foreach(QString val, d1->getPrintStStack())
+            {
+                this->printStStack.push(val);
+            }
+            break;
+        }
         }
     }
 }
@@ -114,10 +122,8 @@ bool BanStatementList::getIfMatches() const
 }
 void BANLogic::BanStatementList::print()
 {
-BanStatementList *St=new BanStatementList(this->getStList());
-    foreach(QString ptr, St->getPrintStStack())
+    foreach(QString ptr, this->printStStack)
     {
         QTextStream(stdout)<<ptr;
     }
-
 }

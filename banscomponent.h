@@ -11,7 +11,6 @@ protected:
     bool unifies;
     bool ifMatches;
 
-
 public:
     BanSComponent();
     BanSComponent(BanSComponentType sTy);
