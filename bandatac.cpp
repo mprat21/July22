@@ -26,7 +26,7 @@ void BANLogic::BanDataC::setDtype(QString dType)
 
 void BANLogic::BanDataC::setId(const QString &value)
 {
-    this->dataValue+=value;
+    this->dataValue=value;
 }
 
 QString BANLogic::BanDataC::getID()
@@ -209,6 +209,8 @@ bool BANLogic::BanDataC::unify(BANLogic::BanDComponent *value)
             }
             else
                  unifies=false;
+            //this->getMyListdata().append(value);
+
         }
     }
     return unifies;
@@ -240,6 +242,11 @@ void BANLogic::BanDataC::printRPN()
         {
             BanDOperator *d1=dynamic_cast<BanDOperator *>(ptr);
             d1->printRPN();
+            break;
+        }
+        case BanDComponentType::bAnyData:
+        {
+            QTextStream(stdout) <<ptr->getID()+" "<<flush;
             break;
         }
         }
