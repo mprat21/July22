@@ -36,10 +36,34 @@ void BANLogic::BanDOperator::setDtype(QString oVal)
 
 bool BANLogic::BanDOperator::match(BanDComponent *value)
 {
-    if(this->getID()==(value->getID()))
+    switch(value->getDtype())
     {
-        this->ifMatches=true;
-    }else this->ifMatches=false;
+    case BanDComponentType::bAtom:
+    {
+        this->ifMatches=false;
+        break;
+    }
+    case BanDComponentType::bOperator:
+    {
+        BanDOperator *bop = dynamic_cast<BanDOperator *>(value);
+        if(this->getDOtype()==bop->getDOtype())
+        {
+            this->ifMatches=true;
+        }else this->ifMatches=false;
+        break;
+    }
+    case BanDComponentType::bAnyData:
+    {
+        this->ifMatches=false;
+        break;
+    }
+    default:
+    {
+        throw new BanException("Unrecognised Component Type in banDOperator::match()");
+    }
+    }
+
+
     return this->ifMatches;
 }
 
@@ -57,35 +81,23 @@ bool BANLogic::BanDOperator::unify(BanDComponent *value)
         case BanDComponentType::bOperator:
         {
             BanDOperator *bop = dynamic_cast<BanDOperator *>(value);
-            if(this->getID()==value->getID())
+            if(this->getDOtype()==bop->getDOtype())
             {
                 this->unifies=true;
-                this->setId(value->getID());
-
+                this->setId(bop->getID());
             }
-            else if(this->getID()!=value->getID())
-            {
-                if(this->getInstantiate()==true && bop->getInstantiate()==false)
-                {
-                    QTextStream(stdout) <<this->getID();
-                    this->unifies=true;
-                    this->setId(bop->getID());
-
-                }
-                else if(bop->getInstantiate()==true && this->getInstantiate()==false)
-                {
-                    QTextStream(stdout) <<bop->getID();
-                    this->unifies=true;
-                    bop->setId(this->getID());
-
-                }
-            }
+            else
+                this->unifies=false;
             break;
         }
         case BanDComponentType::bAnyData:
         {
             this->unifies=false;
             break;
+        }
+        default:
+        {
+            throw new BanException("Unrecognised Component Type in banDOperator::unify()");
         }
         }
     }

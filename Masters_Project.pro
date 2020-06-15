@@ -20,6 +20,7 @@ SOURCES += \
         bandatom.cpp \
         bandcomponent.cpp \
         bandoperator.cpp \
+        banexception.cpp \
         banlogicimpl.cpp \
         banscomponent.cpp \
         bansoperator.cpp \
@@ -35,6 +36,7 @@ HEADERS += \
     bandatom.h \
     bandcomponent.h \
     bandoperator.h \
+    banexception.h \
     banlogicimpl.h \
     banscomponent.h \
     bansoperator.h \

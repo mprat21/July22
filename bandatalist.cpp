@@ -40,9 +40,16 @@ void BANLogic::BanDataList::printRPN()
 
 void BANLogic::BanDataList::print()
 {
-    foreach(QString val,this->getPrintStack())
+    if(this->getPrintStack().size()==1)
     {
-        QTextStream(stdout)<<val;
+//        foreach(QString val,this->getPrintStack())
+//        {
+            QTextStream(stdout)<<this->getPrintStack().top();
+//        }
+    }
+    else
+    {
+        throw new BanException("Incorrect number of arguments passed, please check the parameters properly");
     }
 }
 QList<BanDComponent *> BANLogic::BanDataList::getDataList()
@@ -204,16 +211,33 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
             {
                 if(mylist2.value(juno)->getDtype()==mylist1.value(i)->getDtype())
                 {
-                    if(mylist1.value(i)->match(mylist2.value(juno)))
+                    if(mylist2.value(juno)->getInstantiate()==true && mylist1.value(i)->getInstantiate()==false )
                     {
-                        ifMatches=true;
-                        mycount++;
-                        juno++;
+                        if(mylist1.value(i)->match(mylist2.value(juno)))
+                        {
+                            ifMatches=true;
+                            mycount++;
+                            juno++;
+                        }
+                        else
+                        {
+                            ifMatches=false;
+                            break;
+                        }
                     }
-                    else
+                    else if(mylist2.value(juno)->getDtype()==BanDComponentType::bOperator && mylist1.value(i)->getDtype()==BanDComponentType::bOperator )
                     {
-                        ifMatches=false;
-                        break;
+                        if(mylist1.value(i)->match(mylist2.value(juno)))
+                        {
+                            ifMatches=true;
+                            mycount++;
+                            juno++;
+                        }
+                        else
+                        {
+                            ifMatches=false;
+                            break;
+                        }
                     }
                 }
                 else if(mylist2.value(i)->getDtype()!=mylist1.value(i)->getDtype())
@@ -239,6 +263,7 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
                                 ifMatches=false;
                                 //break;
                             }
+
                             juno++;
                         }
                     }
@@ -254,6 +279,7 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
                 }
                 cout<<endl;
             }
+
         }
         break;
     }
@@ -350,19 +376,23 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                 {
                     if(mylist2.value(juno)->getDtype()==mylist1.value(i)->getDtype())
                     {
-                        if(mylist1.value(i)->unify(mylist2.value(juno)))
+                        if(mylist1.value(i)->match(mylist2.value(juno)))
                         {
-                            unifies=true;
-                            temp.append(mylist2.value(juno));
-                            mycount++;
-                            juno++;
+                            if(mylist1.value(i)->unify(mylist2.value(juno)))
+                            {
+                                unifies=true;
+                                temp.append(mylist2.value(juno));
+                                mycount++;
+                                juno++;
+                            }
+                            else
+                            {
+                                juno++;
+                                unifies=false;
+                                break;
+                            }
                         }
-                        else
-                        {
-                            juno++;
-                            unifies=false;
-                            break;
-                        }
+
                     }
                     else if(mylist2.value(i)->getDtype()!=mylist1.value(i)->getDtype())
                     {
@@ -377,6 +407,7 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                                     unifies=true;
                                     mycount++;
                                 }
+
                                 juno++;
                             }
                         }

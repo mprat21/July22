@@ -1,3 +1,4 @@
+#include "bandatac.h"
 #include "bandatom.h"
 using namespace BANLogic;
 int BANLogic::BanDAtom::atomCount=1;
@@ -39,35 +40,56 @@ void BANLogic::BanDAtom::setDtype(QString aVal)
 
 bool BANLogic::BanDAtom::match(BanDComponent *value)
 {
-    if(this->getDtype()==BanDComponentType::bAtom && value->getDtype()==BanDComponentType::bAtom)
-    {
-        BanDAtom *bad = dynamic_cast<BanDAtom *>(value);
-        if(this->getAtype()==bad->getAtype() && this->instantiate==bad->instantiate)
+    ifMatches=true;
+    if(value!=NULL){
+        switch(value->getDtype())
         {
-            if(this->getID()==bad->getID())
-                this->ifMatches= true;
-            else if(this->instantiate== false && bad->instantiate==false)
-                this->ifMatches= true;
-            else
-                this->ifMatches= false;
+        case BanDComponentType::bAtom:
+        {
+            BanDAtom *bad = dynamic_cast<BanDAtom *>(value);
+            if(bad->getAtype()!=this->getAtype())
+            {
+                ifMatches=false;
+            }
+            else if(this->instantiate && bad->instantiate)
+            {
+                ifMatches=this->aValue==bad->aValue;
+            }
         }
-        else if(this->getAtype()==bad->getAtype())
+            break;
+        case BanDComponentType::bOperator:
         {
-            if(this->instantiate== false && bad->instantiate==true)
-                this->ifMatches= true;
-            else if(this->instantiate== true && bad->instantiate==false)
-                this->ifMatches= true;
-            else this->ifMatches= false;
+            ifMatches=false;
+        }
+            break;
+        case BanDComponentType::bAnyData:
+        {
+            BanDataC *d =dynamic_cast<BanDataC *>(value);
+            QList<BanDComponent*> dlist=d->getMyListdata();
+            for(int i=0; i<dlist.size();i++)
+            {
+                switch(dlist.value(i)->getDtype())
+                {
+                case BanDComponentType::bAtom:
+                {
+                    ifMatches = match(dlist.value(i));
+                    break;
+                }
+                case BanDComponentType::bOperator:
+                {
+                    ifMatches = false;
+                    break;
+                }
+                }
+            }
+            break;
+        }
+        default:
+            throw new BanException("Unrecognised Component Type in banAtom::match(...)");
         }
     }
-    else if(this->getDtype()==BanDComponentType::bAtom && value->getDtype()==BanDComponentType::bAnyData)
-    {
-        if(this->getInstantiate()==true && value->getInstantiate()==false)
-            this->ifMatches=true;
-        else this->ifMatches=false;
-    }
-    else this->ifMatches=false;
-    return this->ifMatches;
+    else ifMatches=false;
+    return ifMatches;
 }
 
 bool BANLogic::BanDAtom::unify(BanDComponent *value)
@@ -118,8 +140,12 @@ bool BANLogic::BanDAtom::unify(BanDComponent *value)
                 this->unifies=true;
                 value->setId(this->getID());
                 QTextStream(stdout) << value->getID()<<" = "<<this->getID() <<endl;
-                break;
             }
+            break;
+        }
+        default:
+        {
+            throw new BanException("Unrecognised Component Type in banDAtom::unify()");
         }
         }
     }
@@ -212,7 +238,7 @@ BANLogic::BanDAtom::BanDAtom(banAtomtype aTy, QString aVal):BanDComponent(BanDCo
         }
         default:
         {
-            throw ("Unrecognised Component Type in banDAtom Constructor");
+            throw new BanException("Unrecognised Component Type in banDAtom::constructor()");
         }
         }
         instantiate=false;

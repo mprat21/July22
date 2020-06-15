@@ -5,6 +5,7 @@
 #include <QStack>
 #include <QString>
 #include <QTextStream>
+#include "banexception.h"
 
 using namespace std;
 class banEnums {

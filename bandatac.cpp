@@ -83,7 +83,7 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
                 {
                 case BanDComponentType::bAtom:
                 {
-                    if(val->getInstantiate()==true || val->getInstantiate()==false)
+                    if(val->getInstantiate()==true)
                         ifMatches=true;
                     else ifMatches=false;
                     break;
@@ -92,7 +92,6 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
                 {
                    // if(val->getInstantiate()==true)
                         ifMatches=false;
-
                     break;
                 }
                 case BanDComponentType::bAnyData:
@@ -101,6 +100,10 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
                         ifMatches=true;
                     else ifMatches=false;
                     break;
+                }
+                default:
+                {
+                    throw new BanException("Unrecognised Component Type in banDataC::match()");
                 }
                 }
             }
@@ -131,6 +134,10 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
                     else ifMatches=false;
                     break;
                 }
+                default:
+                {
+                    throw new BanException("Unrecognised Component Type in banDataC::match()");
+                }
                 }
             }
         }
@@ -146,7 +153,7 @@ bool BANLogic::BanDataC::unify(BANLogic::BanDComponent *value)
         if(value->getDtype()==BanDComponentType::bAtom)
         {
             BanDAtom *comp2=dynamic_cast<BanDAtom *>(value);
-            if(comp2->getInstantiate()==true || comp2->getInstantiate()==false)
+            if(comp2->getInstantiate()==true)
             {
                 BanDAtom *atm= new BanDAtom(comp2->getAtype(),comp2->getID());
                 this->myListdata.append(atm);
@@ -192,6 +199,10 @@ bool BANLogic::BanDataC::unify(BANLogic::BanDComponent *value)
                     this-> printQStack.push(this->printQStack.pop()+value->getID()+this->printQStack.pop());
                     this->myListdata.append(op);
                     break;
+                }
+                default:
+                {
+                    throw new BanException("Unrecognised Component Type in banDataC::unify()");
                 }
                 }
                 unifies=false;
@@ -248,6 +259,10 @@ void BANLogic::BanDataC::printRPN()
         {
             QTextStream(stdout) <<ptr->getID()+" "<<flush;
             break;
+        }
+        default:
+        {
+            throw new BanException("Unrecognised Component Type in banDataC::printRPN()");
         }
         }
         //QTextStream(stdout)<<ptr->getID();
