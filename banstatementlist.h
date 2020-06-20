@@ -10,6 +10,7 @@ namespace BANLogic{
 class BanStatementList : public BanSComponent
 {
 protected:
+    static int statementCount;
     BanSOperatorType stype;
     QList<BanSComponent*> stList;
     QStack<QString> printStStack;

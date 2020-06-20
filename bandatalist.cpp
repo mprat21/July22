@@ -42,10 +42,10 @@ void BANLogic::BanDataList::print()
 {
     if(this->getPrintStack().size()==1)
     {
-//        foreach(QString val,this->getPrintStack())
-//        {
-            QTextStream(stdout)<<this->getPrintStack().top();
-//        }
+        //        foreach(QString val,this->getPrintStack())
+        //        {
+        QTextStream(stdout)<<this->getPrintStack().top();
+        //        }
     }
     else
     {
@@ -119,7 +119,12 @@ BANLogic::BanDataList::BanDataList(QList<BanDComponent *> dList):BanSComponent(B
                 this-> printStack.push(this->printStack.pop()+ptr->getID()+this->printStack.pop());
                 break;
             }
+            default:
+            {
+                throw new BanException("please check the parameters properly:BanDataList bOperator");
             }
+            }
+
             break;
         }
         case BanDComponentType::bAnyData:
@@ -142,8 +147,14 @@ BANLogic::BanDataList::BanDataList(QList<BanDComponent *> dList):BanSComponent(B
                     this->instantiate=true;
                 }
             }
+            break;
+        }
+        default:
+        {
+            throw new BanException("please check the parameters properly:BanDataList");
         }
         }
+
     }
 }
 
@@ -168,7 +179,11 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
                         BanDAtom *atom1=dynamic_cast<BanDAtom *>(this->getDataList().value(i));
                         BanDAtom *atom2=dynamic_cast<BanDAtom *>(data.getDataList().value(i));
                         if(atom1->match(atom2))
+                        {
+                            QTextStream(stdout) <<atom1->getID()<<" = "<<atom2->getID()<<endl;
+
                             ifMatches=true;
+                        }
                         else ifMatches=false;
                         break;
                     }
@@ -261,7 +276,8 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
                             else
                             {
                                 ifMatches=false;
-                                //break;
+                                mycount++;
+                               // break;
                             }
 
                             juno++;
@@ -269,8 +285,8 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
                     }
                 }
             }
-            cout<<endl;
-            if(ifMatches)
+           // cout<<endl;
+            if(mycount==mylist2.size())
             {
                 QTextStream(stdout)<<this->getDataList().at(dataTypeIndex)->getID()<< " =  ";
                 foreach(BanDComponent *lo, temp)
@@ -278,6 +294,7 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
                     QTextStream(stdout) <<lo->getID()+"  "<<flush;
                 }
                 cout<<endl;
+                ifMatches=true;
             }
 
         }
@@ -419,6 +436,7 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                     this->dataList=temp;
                     this->printStack=finalList->printStack;
                     data.dataList=this->dataList;
+                    //data.instantiate=true;
                     data.printStack=this->printStack;
                 }
             }

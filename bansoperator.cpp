@@ -1,17 +1,17 @@
 #include "bansoperator.h"
 using namespace BANLogic;
-BanSOperatorType BANLogic::banSOperator::getStOptype() const
+BanSOperatorType BANLogic::BanSOperator::getStOptype() const
 {
     return astype;
 }
 
 
-BANLogic::banSOperator::banSOperator():BanSComponent(BanSComponentType::bSOperator)
+BANLogic::BanSOperator::BanSOperator():BanSComponent(BanSComponentType::bSOperator)
 {
 
 }
 
-BANLogic::banSOperator::banSOperator(BanSOperatorType adTy):BanSComponent(BanSComponentType::bSOperator),astype(adTy)
+BANLogic::BanSOperator::BanSOperator(BanSOperatorType adTy):BanSComponent(BanSComponentType::bSOperator),astype(adTy)
 {
     switch(adTy)
     {
@@ -39,27 +39,53 @@ BANLogic::banSOperator::banSOperator(BanSOperatorType adTy):BanSComponent(BanSCo
 }
 
 
-BANLogic::banSOperator::~banSOperator()
+BANLogic::BanSOperator::~BanSOperator()
 {
 
 }
 
-bool BANLogic::banSOperator::getInstantiate() const
+bool BANLogic::BanSOperator::getInstantiate() const
 {
     return instantiate;
 }
 
-bool BANLogic::banSOperator::match(BanSComponent &value)
+bool BANLogic::BanSOperator::match(BanSComponent &value)
 {
-    return ifMatches;
+    switch(value.getStype())
+    {
+    case BanSComponentType::bData:
+    {
+        this->ifMatches=false;
+        break;
+    }
+    case BanSComponentType::bSOperator:
+    {
+        BanSOperator bop = dynamic_cast<BanSOperator&>(value);
+        if(this->getStOptype()==bop.getStOptype())
+        {
+            this->ifMatches=true;
+        }else this->ifMatches=false;
+        break;
+    }
+    case BanSComponentType::bStatement:
+    {
+        this->ifMatches=false;
+        break;
+    }
+    default:
+    {
+        throw new BanException("Unrecognised Component Type in banSOperator::match()");
+    }
+    }
+    return this->ifMatches;
 }
 
-bool BANLogic::banSOperator::unify(BanSComponent &value)
+bool BANLogic::BanSOperator::unify(BanSComponent &value)
 {
     return unifies;
 }
 
-bool BANLogic::banSOperator::getIfMatches() const
+bool BANLogic::BanSOperator::getIfMatches() const
 {
     return ifMatches;
 }

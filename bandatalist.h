@@ -13,10 +13,8 @@ class BanDataList : public BanSComponent
 protected:
    static int datacount;
     QString dataID;
-   // BanDComponentType dType;
     QList<BanDComponent*> dataList;
     QStack<QString> printStack;
-    //QList<BanSComponent*> StList;
 
 public:
     BanDataList();

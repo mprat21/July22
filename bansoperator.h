@@ -3,21 +3,21 @@
 #include "banscomponent.h"
 namespace BANLogic {
 
-class banSOperator: public BanSComponent
+class BanSOperator: public BanSComponent
 {
 protected:
     BanSOperatorType astype;
     QString soValue;
 
 public:
-    banSOperator();
-    banSOperator(BanSOperatorType adTy);
+    BanSOperator();
+    BanSOperator(BanSOperatorType adTy);
     // BanSComponent interface
     virtual QString getID() override{return soValue;}
     virtual void print() override{QTextStream(stdout)<<soValue<<flush;}
     void printRPN() override{QTextStream(stdout)<<"["+this->soValue+"]"<<flush;}
     BanSOperatorType getStOptype() const;
-    virtual ~banSOperator();
+    virtual ~BanSOperator();
     bool getInstantiate () const override;
     bool match(BanSComponent &value) override;
     bool unify(BanSComponent &value) override;
