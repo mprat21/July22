@@ -482,17 +482,8 @@ void BANLogicImpl::show()
         cout<<endl;
         cout<<endl<<endl;
 
-        BanStatementList *stList13=new BanStatementList({ new BanDataList({new BanDAtom(Principal,"S")}),
-                                                          new BanDataList({new BanDAtom(Principal,"A")}),
-                                                          new BanDataList({
-                                                              new BanDAtom(Principal,"P"), new BanDAtom(Principal,"B"),
-                                                              new BanDAtom(Nonce,"Na"), new BanDOperator(BanDOperatorType::concates),
-                                                              new BanDAtom(SymKey,"Kab"), new BanDOperator(BanDOperatorType::Encryption),
-                                                              new BanDAtom(Nonce,"Nb"), new BanDOperator(BanDOperatorType::concates),
-                                                              new BanDOperator(BanDOperatorType::concates), new BanDAtom(SymKey,"Kbc"),
-                                                              new BanDOperator(BanDOperatorType::Encryption)
-                                                          }),
-                                                          new BanSOperator(BanSOperatorType::possess),
+        BanStatementList *stList13=new BanStatementList({ new BanDataList({new BanDAtom(Principal,"A")}),
+                                                          stList11,
                                                          new BanSOperator(BanSOperatorType::conveyed)
                                                        });
         cout<<"Printing the Statement : Statement 13 in RPN notation:"<<endl;
@@ -506,74 +497,16 @@ void BANLogicImpl::show()
         {
             cout<<endl;
             stList12->print();
-            cout<<endl<<"matches n unifies"<<endl;
+            cout<<endl<<"matches"<<endl;
             stList13->print();
-
         }
         else
         {
             cout<<endl;
             stList12->print();
-            cout<<endl<<"does not match or unify"<<endl;
+            cout<<endl<<"does not match"<<endl;
             stList13->print();
         }
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-        BanStatementList *stList14=new BanStatementList({ new BanDataList({new BanDAtom(Principal,"")}),
-                                                          new BanDataList({new BanDAtom(Principal,"")}),
-                                                          new BanStatementList(),
-                                                          new BanSOperator(BanSOperatorType::possess),
-                                                         new BanSOperator(BanSOperatorType::conveyed)
-                                                       });
-        cout<<endl<<endl<<endl<<"Printing the any Statement : free Statement 14 in RPN notation:"<<endl;
-        stList14->printRPN();
-        cout<<endl;
-        cout<<"Printing the any Statement in free Statement 14 in Infix notation:"<<endl;
-        stList14->print();
-        cout<<endl;
-        cout<<endl<<endl;
-
-        BanStatementList *stList15=new BanStatementList({ new BanDataList({new BanDAtom(Principal,"S")}),
-                                                          new BanDataList({new BanDAtom(Principal,"A")}),
-                                                          new BanDataList({new BanDAtom(Principal,"C")}),
-
-                                                          new BanDataList({
-                                                              new BanDAtom(Principal,"P"), new BanDAtom(Principal,"B"),
-                                                              new BanDAtom(Nonce,"Na"), new BanDOperator(BanDOperatorType::concates),
-                                                              new BanDAtom(SymKey,"Kab"), new BanDOperator(BanDOperatorType::Encryption),
-                                                              new BanDAtom(Nonce,"Nb"), new BanDOperator(BanDOperatorType::concates),
-                                                              new BanDOperator(BanDOperatorType::concates), new BanDAtom(SymKey,"Kbc"),
-                                                              new BanDOperator(BanDOperatorType::Encryption)
-                                                          }),
-                                                          new BanSOperator(BanSOperatorType::told),
-                                                          new BanSOperator(BanSOperatorType::possess),
-                                                         new BanSOperator(BanSOperatorType::conveyed)
-                                                       });
-        cout<<"Printing the Statement : Statement 15 in RPN notation:"<<endl;
-        stList15->printRPN();
-        cout<<endl;
-        cout<<"Printing the Statement : Statement 15 in Infix notation:"<<endl;
-        stList15->print();
-        cout<<endl;
-        cout<<endl<<endl;
-        if(stList14->unify(*stList15))
-        {
-            cout<<endl;
-            stList14->print();
-            cout<<endl<<"matches n unifies"<<endl;
-            stList15->print();
-
-        }
-        else
-        {
-            cout<<endl;
-            stList14->print();
-            cout<<endl<<"does not match or unify"<<endl;
-            stList15->print();
-        }
-
 
 
     } catch (BanException &e)

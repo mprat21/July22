@@ -258,8 +258,6 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
                 {
                     if(mylist1.value(i)->getDtype()==BanDComponentType::bAnyData)
                     {
-
-
                         for(int j=i; j<=mylist2.size()-(mylist1.size()-i);j++)
                         {
                             juno=j;
@@ -344,7 +342,6 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                             unifies=false;
                             break;
                         }
-
                         break;
                     }
                     case BanDComponentType::bOperator:
@@ -406,8 +403,6 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                                 unifies=false;
                                 break;
                             }
-
-
                     }
                     else if(mylist2.value(i)->getDtype()!=mylist1.value(i)->getDtype())
                     {
@@ -432,7 +427,6 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                         }
                     }
                 }
-
             }
             break;
         }
