@@ -126,7 +126,7 @@ bool BANLogic::BanStatementList::match(BanSComponent &Scomp)
         QList<BanSComponent*> mylist2=data.getStList();
         QList<BanDComponent*> temp1;
         QList<BanSComponent*> temp;
-        int mycount=0, juno=0,dataTypeIndex=0;;
+        int mycount=0, juno=0,dataTypeIndex=0;
         if(mylist1.size()==mylist2.size())
         {
             for(int i=0; i<mylist1.size(); i++)
@@ -185,10 +185,6 @@ bool BANLogic::BanStatementList::match(BanSComponent &Scomp)
             }
             if(mycount==mylist2.size())
             {
-                //QTextStream(stdout)<<this->getStList().at(dataTypeIndex)->getID();
-               // BanStatementList *tp=new BanStatementList({temp});
-               // cout<<"    "; tp->print();
-               // cout<<endl;
                 ifMatches=true;
             }
             else ifMatches=false;
@@ -303,6 +299,8 @@ bool BANLogic::BanStatementList::match(BanSComponent &Scomp)
             }
             if(mycount==mylist2.size())
             {
+                cout<<endl<<endl;
+
                 QTextStream(stdout)<<this->getStList().at(dataTypeIndex)->getID();
                 BanStatementList *tp=new BanStatementList({temp});
                 cout<<" = "; tp->print();
@@ -328,9 +326,221 @@ bool BANLogic::BanStatementList::match(BanSComponent &Scomp)
     return ifMatches;
 }
 
-bool BANLogic::BanStatementList::unify(BanSComponent &value)
+bool BANLogic::BanStatementList::unify(BanSComponent &Scomp)
 {
-    return false;
+    if(this->match(Scomp))
+    {
+        switch(Scomp.getStype())
+        {
+        case BanSComponentType::bStatement:
+        {
+            BanStatementList data=dynamic_cast<BanStatementList&>(Scomp);
+            QList<BanSComponent*> mylist1=this->getStList();
+            QList<BanSComponent*> mylist2=data.getStList();
+            QList<BanDComponent*> temp1;
+            QList<BanSComponent*> temp;
+            int mycount=0, juno=0,dataTypeIndex=0;
+            if(mylist1.size()==mylist2.size())
+            {
+                for(int i=0; i<mylist1.size(); i++)
+                {
+                    switch(mylist1.value(i)->getStype())
+                    {
+                    case BanSComponentType::bData:
+                    {
+                        BanDataList *d1=dynamic_cast<BanDataList*>(this->stList.value(i));
+                        BanDataList *d2=dynamic_cast<BanDataList*>(mylist2.value(i));
+
+                        if(d1->unify(*d2))
+                        {
+                            QTextStream(stdout) <<d1->getID()+ " " <<flush;
+
+                            unifies=true;
+                            mycount++;
+                        }
+                        else
+                        {
+                            unifies=false;
+                            break;
+                        }
+                        break;
+                    }
+                    case BanSComponentType::bSOperator:
+                    {
+                        BanSOperator *op1=dynamic_cast<BanSOperator*>(mylist1.value(i));
+                        BanSOperator *op2=dynamic_cast<BanSOperator*>(mylist2.value(i));
+                        if(op1->unify(*op2))
+                        {
+                            unifies=true;
+                            mycount++;
+                        }
+                        else
+                        {
+                            unifies=false;
+                            break;
+                        }
+                        break;
+                    }
+                    case BanSComponentType::bStatement:
+                    {
+                        BanStatementList *s1=dynamic_cast<BanStatementList*>(mylist1.value(i));
+                        BanStatementList *s2=dynamic_cast<BanStatementList*>(mylist2.value(i));
+                        if(s1->unify(*s2))
+                        {
+                            unifies=true;
+                            mycount++;
+                        }
+                        else
+                        {
+                            unifies=false;
+                            break;
+                        }
+                        break;
+                    }
+                    }
+                }
+                if(unifies)
+                {
+                    this->stList=data.stList;
+                    this->printStStack=data.printStStack;
+                }
+                else unifies=false;
+            }
+            else if(mylist1.size()!=mylist2.size())
+            {
+                int i;
+                for(i=0; i<mylist1.size(); i++)
+                {
+                    if(mylist2.value(juno)->getStype()==mylist1.value(i)->getStype())
+                    {
+                        switch(mylist1.value(i)->getStype())
+                        {
+                        case BanSComponentType::bData:
+                        {
+                            BanDataList *d1=dynamic_cast<BanDataList*>(mylist1.value(i));
+                            BanDataList *d2=dynamic_cast<BanDataList*>(mylist2.value(juno));
+                            if(d1->unify(*d2))
+                            {
+
+                                //this->getStList().value(i)->setId(mylist2.value(juno)->getID());
+
+                                unifies=true;
+                                mycount++;
+                                juno++;
+                            }
+                            else
+                            {
+                                unifies=false;
+                                break;
+                            }
+                            break;
+                        }
+                        case BanSComponentType::bSOperator:
+                        {
+                            BanSOperator *op1=dynamic_cast<BanSOperator*>(mylist1.value(i));
+                            BanSOperator *op2=dynamic_cast<BanSOperator*>(mylist2.value(juno));
+                            if(op1->unify(*op2))
+                            {
+                                unifies=true;
+                                mycount++;
+                                juno++;
+                            }
+                            else
+                            {
+                                unifies=false;
+                                break;
+                            }
+                            break;
+                        }
+                        case BanSComponentType::bStatement:
+                        {
+                            BanStatementList *s1=dynamic_cast<BanStatementList*>(mylist1.value(i));
+                            BanStatementList *s2=dynamic_cast<BanStatementList*>(mylist2.value(i));
+                            if(s1->unify(*s2))
+                            {
+                                unifies=true;
+                                mycount++;
+                                juno++;
+                            }
+                            else
+                            {
+                                unifies=false;
+                                break;
+                            }
+                            break;
+                        }
+                        }
+                    }
+                    else if(mylist2.value(juno)->getStype()!=mylist1.value(i)->getStype())
+                    {
+
+                        if(mylist1.value(i)->getStype()==BanSComponentType::bStatement)
+                        {
+                            //saving the index of anyStatement
+                            if(mylist1.at(i)->getStype()==BanSComponentType::bStatement)
+                            {dataTypeIndex=i;}
+
+                            for(int j=i; j<=mylist2.size()-(mylist1.size()-i);j++)
+                            {
+                                juno=j;
+
+                                switch(mylist2.value(j)->getStype())
+                                {
+                                case BanSComponentType::bData:
+                                {
+                                    if(mylist2.value(j)->getInstantiate()==true)
+                                    {
+                                        temp.append(mylist2.value(j));
+                                        BanDataList *dlist1=dynamic_cast<BanDataList*>(mylist2.value(j));
+                                        foreach(BanDComponent *ptr ,dlist1->getDataList())
+                                        {
+                                            temp1.append(ptr);
+                                        }
+                                        mycount++;
+                                        unifies=false;
+                                    }
+                                    break;
+                                }
+                                case BanSComponentType::bSOperator:
+                                {
+                                    BanSOperator *sop=dynamic_cast<BanSOperator*>(mylist2.value(j));
+                                    temp.append(mylist2.value(j));
+                                    mycount++;
+                                    unifies=false;
+                                    break;
+                                }
+
+                                }
+                            }
+                            juno++;
+                        }
+                    }
+                }
+                if(unifies)
+                {
+                    BanStatementList *tp=new BanStatementList(temp);
+                    this->stList.replace(dataTypeIndex,tp);
+                    this->printStStack=tp->printStStack;
+
+                }
+            }
+
+            break;
+        }
+        case BanSComponentType::bData:{
+            ifMatches=false;
+            break;
+        }
+        case BanSComponentType::bSOperator:{
+            ifMatches=false;
+            break;
+        }
+
+        }
+
+
+    }
+    return unifies;
 }
 
 bool BanStatementList::getInstantiate() const
@@ -344,8 +554,16 @@ bool BanStatementList::getIfMatches() const
 }
 void BANLogic::BanStatementList::print()
 {
-    foreach(QString ptr, this->printStStack)
+    BanStatementList *tp=new BanStatementList(this->stList);
+
+    foreach(QString ptr, tp->printStStack)
     {
         QTextStream(stdout)<<ptr;
     }
+}
+
+
+void BANLogic::BanStatementList::setId(const QString &value)
+{
+    stid=value;
 }

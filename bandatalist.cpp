@@ -40,11 +40,12 @@ void BANLogic::BanDataList::printRPN()
 
 void BANLogic::BanDataList::print()
 {
-    if(this->getPrintStack().size()==1)
+    BanDataList *d=new BanDataList(this->getDataList());
+    if(d->getPrintStack().size()==1)
     {
         //        foreach(QString val,this->getPrintStack())
         //        {
-        QTextStream(stdout)<<this->getPrintStack().top();
+        QTextStream(stdout)<<d->getPrintStack().top();
         //        }
     }
     else
@@ -180,8 +181,6 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
                         BanDAtom *atom2=dynamic_cast<BanDAtom *>(data.getDataList().value(i));
                         if(atom1->match(atom2))
                         {
-                            QTextStream(stdout) <<atom1->getID()<<" = "<<atom2->getID()<<endl;
-
                             ifMatches=true;
                         }
                         else ifMatches=false;
@@ -259,9 +258,7 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
                 {
                     if(mylist1.value(i)->getDtype()==BanDComponentType::bAnyData)
                     {
-                        //saving the index of AnyData
-                        if(mylist1.at(i)->getDtype()==BanDComponentType::bAnyData)
-                        {dataTypeIndex=i;}
+
 
                         for(int j=i; j<=mylist2.size()-(mylist1.size()-i);j++)
                         {
@@ -285,15 +282,13 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
                     }
                 }
             }
-           // cout<<endl;
             if(mycount==mylist2.size())
             {
-                QTextStream(stdout)<<this->getDataList().at(dataTypeIndex)->getID()<< " =  ";
-                foreach(BanDComponent *lo, temp)
-                {
-                    QTextStream(stdout) <<lo->getID()+"  "<<flush;
-                }
-                cout<<endl;
+                //QTextStream(stdout)<<this->getDataList().at(dataTypeIndex)->getID()<< " =  ";
+//                foreach(BanDComponent *lo, temp)
+//                {
+//                    //QTextStream(stdout) <<lo->getID()+"  "<<flush;
+//                }
                 ifMatches=true;
             }
 
@@ -318,6 +313,7 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
 {
     if(this->match(Scomp))
     {
+        int dataTypeIndex=0;
         QList<BanDComponent*> mylist1=this->getDataList();
         BanDataList &data=dynamic_cast<BanDataList&>(Scomp);
         QList<BanDComponent*> mylist2=data.getDataList();
@@ -339,6 +335,7 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                         if(atom1->unify(atom2))
                         {
                             temp.append(data.getDataList().value(i));
+                            //this->dataList.value(i)->setId(atom2->getID());
                             // mylist1.replace(i,data.getDataList().value(i));
                             unifies=true;
                         }
@@ -369,10 +366,11 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                     }
                     case BanDComponentType::bAnyData:{
                         BanDataC *dataany1=dynamic_cast<BanDataC *>(mylist1.value(i));
+                        QTextStream(stdout)<<dataany1->getID()+" = "<<flush;
                         if(dataany1->unify(mylist2.value(i)))
                         {
                             temp.append(data.getDataList().value(i));
-                            //  mylist1.replace(i,data.getDataList().value(i));
+                            //mylist1.replace(i,data.getDataList().value(i));
                             unifies=true;
                         }
                         else
@@ -393,11 +391,11 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                 {
                     if(mylist2.value(juno)->getDtype()==mylist1.value(i)->getDtype())
                     {
-                        if(mylist1.value(i)->match(mylist2.value(juno)))
-                        {
+
                             if(mylist1.value(i)->unify(mylist2.value(juno)))
                             {
                                 unifies=true;
+                                //this->dataList.value(i)->setId(mylist2.value(juno)->getID());
                                 temp.append(mylist2.value(juno));
                                 mycount++;
                                 juno++;
@@ -408,13 +406,17 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                                 unifies=false;
                                 break;
                             }
-                        }
+
 
                     }
                     else if(mylist2.value(i)->getDtype()!=mylist1.value(i)->getDtype())
                     {
+                        QTextStream(stdout)<<mylist1.value(i)->getID()+ " = " <<flush;
+
                         if(mylist1.value(i)->getDtype()==BanDComponentType::bAnyData)
                         {
+                            dataTypeIndex=i;
+
                             for(int j=i; j<=mylist2.size()-(mylist1.size()-i);j++)
                             {
                                 juno=j;
@@ -430,15 +432,7 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
                         }
                     }
                 }
-                if(unifies)
-                {
-                    BanDataList *finalList=new BanDataList(temp);
-                    this->dataList=temp;
-                    this->printStack=finalList->printStack;
-                    data.dataList=this->dataList;
-                    //data.instantiate=true;
-                    data.printStack=this->printStack;
-                }
+
             }
             break;
         }
@@ -453,6 +447,11 @@ bool BANLogic::BanDataList::unify(BanSComponent &Scomp)
             break;
         }
         }
+        if(unifies)
+        {
+            this->dataList=temp;
+            this->printStack=data.printStack;
+        }
     }
     return unifies;
 }
@@ -465,4 +464,9 @@ bool BanDataList::getInstantiate() const
 bool BanDataList::getIfMatches() const
 {
     return ifMatches;
+}
+
+void BanDataList::setId(const QString &value)
+{
+    dataID=value;
 }

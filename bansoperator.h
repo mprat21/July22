@@ -22,6 +22,7 @@ public:
     bool match(BanSComponent &value) override;
     bool unify(BanSComponent &value) override;
     bool getIfMatches() const override;
+    virtual void setId(const QString &value) override;
 };
 
 }

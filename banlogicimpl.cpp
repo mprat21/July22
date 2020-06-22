@@ -365,11 +365,11 @@ void BANLogicImpl::show()
         stList7->print();
         cout<<endl;
         cout<<endl<<endl;
-        if(stList6->match(*stList7))
+        if(stList6->unify(*stList7))
         {
             cout<<endl;
             stList6->print();
-            cout<<endl<<"matches"<<endl;
+            cout<<endl<<"matches n unifies"<<endl;
             stList7->print();
 
         }
@@ -377,7 +377,7 @@ void BANLogicImpl::show()
         {
             cout<<endl;
             stList6->print();
-            cout<<endl<<"does not match"<<endl;
+            cout<<endl<<"does not match/unify"<<endl;
             stList7->print();
         }
         cout<<endl<<endl;
@@ -408,11 +408,11 @@ void BANLogicImpl::show()
         stList9->print();
         cout<<endl;
         cout<<endl<<endl;
-        if(stList8->match(*stList9))
+        if(stList8->unify(*stList9))
         {
             cout<<endl;
             stList8->print();
-            cout<<endl<<"matches"<<endl;
+            cout<<endl<<"matches n unifies"<<endl;
             stList9->print();
 
         }
@@ -420,7 +420,7 @@ void BANLogicImpl::show()
         {
             cout<<endl;
             stList8->print();
-            cout<<endl<<"does not match"<<endl;
+            cout<<endl<<"does not match/unify"<<endl;
             stList9->print();
         }
         cout<<endl<<endl;
@@ -451,11 +451,11 @@ void BANLogicImpl::show()
         stList11->print();
         cout<<endl;
         cout<<endl<<endl;
-        if(stList10->match(*stList11))
+        if(stList10->unify(*stList11))
         {
             cout<<endl;
             stList10->print();
-            cout<<endl<<"matches"<<endl;
+            cout<<endl<<"matches n unifies"<<endl;
             stList11->print();
 
         }
@@ -463,7 +463,7 @@ void BANLogicImpl::show()
         {
             cout<<endl;
             stList10->print();
-            cout<<endl<<"does not match"<<endl;
+            cout<<endl<<"does not match/unify"<<endl;
             stList11->print();
         }
 //-------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -502,11 +502,11 @@ void BANLogicImpl::show()
         stList13->print();
         cout<<endl;
         cout<<endl<<endl;
-        if(stList12->match(*stList13))
+        if(stList12->unify(*stList13))
         {
             cout<<endl;
             stList12->print();
-            cout<<endl<<"matches"<<endl;
+            cout<<endl<<"matches n unifies"<<endl;
             stList13->print();
 
         }
@@ -514,7 +514,7 @@ void BANLogicImpl::show()
         {
             cout<<endl;
             stList12->print();
-            cout<<endl<<"does not match"<<endl;
+            cout<<endl<<"does not match or unify"<<endl;
             stList13->print();
         }
 
@@ -558,11 +558,11 @@ void BANLogicImpl::show()
         stList15->print();
         cout<<endl;
         cout<<endl<<endl;
-        if(stList14->match(*stList15))
+        if(stList14->unify(*stList15))
         {
             cout<<endl;
             stList14->print();
-            cout<<endl<<"matches"<<endl;
+            cout<<endl<<"matches n unifies"<<endl;
             stList15->print();
 
         }
@@ -570,7 +570,7 @@ void BANLogicImpl::show()
         {
             cout<<endl;
             stList14->print();
-            cout<<endl<<"does not match"<<endl;
+            cout<<endl<<"does not match or unify"<<endl;
             stList15->print();
         }
 

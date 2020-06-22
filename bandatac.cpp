@@ -210,6 +210,7 @@ bool BANLogic::BanDataC::unify(BANLogic::BanDComponent *value)
         }
         else if(value->getDtype()==BanDComponentType::bAnyData)
         {
+           // QTextStream(stdout) <<this->getID()+ " " <<flush;
 
             BanDataC *comp2=dynamic_cast<BanDataC *>(this);
             if(comp2->getInstantiate()==true)
@@ -223,6 +224,12 @@ bool BANLogic::BanDataC::unify(BANLogic::BanDComponent *value)
             //this->getMyListdata().append(value);
 
         }
+    }
+    if(unifies)
+    {
+        if(value->getDtype()!=BanDComponentType::bOperator)
+            QTextStream(stdout) <<value->getID()+ " " <<flush;
+
     }
     return unifies;
 }

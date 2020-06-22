@@ -30,6 +30,7 @@ public:
     bool getIfMatches() const override;
     QList<BanSComponent *> getStList() const;
     QStack<QString> getPrintStStack() const;
+    virtual void setId(const QString &value) override;
 };
 
 }

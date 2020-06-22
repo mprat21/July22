@@ -31,6 +31,8 @@ public:
     bool getIfMatches() const override;
     QList<BanSComponent *> getStList() const;
    // QList<BanDataList *> getDList1() const;
+
+    virtual void setId(const QString &value) override;
 };
 }
 #endif // BANDATALIST_H

@@ -82,10 +82,48 @@ bool BANLogic::BanSOperator::match(BanSComponent &value)
 
 bool BANLogic::BanSOperator::unify(BanSComponent &value)
 {
-    return unifies;
+    if(this->match(value))
+    {
+        switch(value.getStype())
+        {
+        case BanSComponentType::bData:
+        {
+            this->unifies=false;
+            break;
+        }
+        case BanSComponentType::bSOperator:
+        {
+            BanSOperator &bop = dynamic_cast<BanSOperator&>(value);
+            if(this->getStOptype()==bop.getStOptype())
+            {
+                this->unifies=true;
+                this->setId(bop.getID());
+            }
+            else
+                this->unifies=false;
+            break;
+        }
+        case BanSComponentType::bStatement:
+        {
+            this->unifies=false;
+            break;
+        }
+        default:
+        {
+            throw new BanException("Unrecognised Component Type in banSOperator::unify()");
+        }
+        }
+    }
+    return this->unifies;
 }
 
 bool BANLogic::BanSOperator::getIfMatches() const
 {
     return ifMatches;
+}
+
+
+void BANLogic::BanSOperator::setId(const QString &value)
+{
+    soValue=value;
 }

@@ -104,18 +104,24 @@ bool BANLogic::BanDAtom::unify(BanDComponent *value)
             {
                 if(this->getInstantiate()==false && value->getInstantiate()==true)
                 {
+                    cout<<endl;
+
                     QTextStream(stdout)<<this->getID()<<" = " <<value->getID() <<endl;
                     this->setId(value->getID());
                     this->unifies=true;
                 }
                 else if(this->getInstantiate()==true && value->getInstantiate()==false)
                 {
+                    cout<<endl;
+
                     QTextStream(stdout) << value->getID()<<" = "<<this->getID() <<endl;
                     value->setId(this->getID());
                     this->unifies=true;
                 }
                 else if(this->getInstantiate()==false && value->getInstantiate()==false)
                 {
+                    cout<<endl;
+
                     QTextStream(stdout) << this->getID()<<" = "<<value->getID() <<endl;
                     this->setId(value->getID());
                     this->unifies=true;
@@ -139,7 +145,8 @@ bool BANLogic::BanDAtom::unify(BanDComponent *value)
             {
                 this->unifies=true;
                 value->setId(this->getID());
-                QTextStream(stdout) << value->getID()<<" = "<<this->getID() <<endl;
+                cout<<endl;
+                QTextStream(stdout)<< value->getID()<<" = "<<this->getID() <<endl;
             }
             break;
         }
