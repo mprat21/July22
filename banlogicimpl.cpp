@@ -429,7 +429,7 @@ void BANLogicImpl::show()
 
 
         BanStatementList *stList10=new BanStatementList({ new BanDataList({new BanDAtom(Principal,"")}),
-                                                         stList8,
+                                                         stList1,
                                                          new BanSOperator(BanSOperatorType::conveyed)
                                                        });
         cout<<endl<<"Printing the free Statement in Statement 10 in RPN notation:"<<endl;
@@ -441,7 +441,7 @@ void BANLogicImpl::show()
         cout<<endl<<endl;
 
         BanStatementList *stList11=new BanStatementList({ new BanDataList({new BanDAtom(Principal,"S")}),
-                                                         stList9,
+                                                         stList1,
                                                          new BanSOperator(BanSOperatorType::conveyed)
                                                        });
         cout<<"Printing the Statement : Statement 11 in RPN notation:"<<endl;
@@ -472,7 +472,7 @@ void BANLogicImpl::show()
 
         BanStatementList *stList12=new BanStatementList({ new BanDataList({new BanDAtom(Principal,"")}),
                                                          new BanStatementList(),
-                                                         new BanSOperator(BanSOperatorType::conveyed)
+                                                         new BanSOperator(BanSOperatorType::believe)
                                                        });
         cout<<endl<<endl<<endl<<"Printing the any Statement : free Statement 12 in RPN notation:"<<endl;
         stList12->printRPN();
@@ -482,9 +482,9 @@ void BANLogicImpl::show()
         cout<<endl;
         cout<<endl<<endl;
 
-        BanStatementList *stList13=new BanStatementList({ new BanDataList({new BanDAtom(Principal,"A")}),
-                                                          stList11,
-                                                         new BanSOperator(BanSOperatorType::conveyed)
+        BanStatementList *stList13=new BanStatementList({ new BanDataList({new BanDAtom(Principal,"C")}),
+                                                          stList1,
+                                                         new BanSOperator(BanSOperatorType::believe)
                                                        });
         cout<<"Printing the Statement : Statement 13 in RPN notation:"<<endl;
         stList13->printRPN();
@@ -497,18 +497,16 @@ void BANLogicImpl::show()
         {
             cout<<endl;
             stList12->print();
-            cout<<endl<<"matches"<<endl;
+            cout<<endl<<"matches/unify"<<endl;
             stList13->print();
         }
         else
         {
             cout<<endl;
             stList12->print();
-            cout<<endl<<"does not match"<<endl;
+            cout<<endl<<"does not match/unify"<<endl;
             stList13->print();
         }
-
-
     } catch (BanException &e)
     {
         e.what("Handled exception");

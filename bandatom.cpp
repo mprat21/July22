@@ -145,8 +145,6 @@ bool BANLogic::BanDAtom::unify(BanDComponent *value)
             {
                 this->unifies=true;
                 value->setId(this->getID());
-                cout<<endl;
-                QTextStream(stdout)<< value->getID()<<" = "<<this->getID() <<endl;
             }
             break;
         }
