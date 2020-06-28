@@ -15,11 +15,11 @@ BANLogic::BanSOperator::BanSOperator(BanSOperatorType adTy):BanSComponent(BanSCo
 {
     switch(adTy)
     {
-    case BanSOperatorType::told:{
-        soValue=" told ";
+    case BanSOperatorType::said:{
+        soValue=" once said ";
         break;
     }
-    case BanSOperatorType::believe:{
+    case BanSOperatorType::believes:{
         soValue=" believes ";
         break;
     }
@@ -31,8 +31,12 @@ BANLogic::BanSOperator::BanSOperator(BanSOperatorType adTy):BanSComponent(BanSCo
         soValue=" conveyed ";
         break;
     }
-    case BanSOperatorType::hasJurisdiction:{
+    case BanSOperatorType::controls:{
         soValue=" hasJurisdiction over ";
+        break;
+    }
+    case BanSOperatorType::sees:{
+        soValue=" sees ";
         break;
     }
     }

@@ -28,9 +28,13 @@ void BANLogic::BanDOperator::setDtype(QString oVal)
     {
         adtype=BanDOperatorType::ShareSecret;
     }
-    else if(oVal=="Hash")
+    else if(oVal=="has key")
     {
-        adtype=BanDOperatorType::HashKey;
+        adtype=BanDOperatorType::HasKey;
+    }
+    else if(oVal==" has password")
+    {
+        adtype=BanDOperatorType::SecretPassword;
     }
 }
 
@@ -139,27 +143,33 @@ BANLogic::BanDOperator::BanDOperator(BanDOperatorType adTy):BanDComponent(BanDCo
         break;
     }
     case BanDOperatorType::Encryption:{
-        oValue="encryptedby";
+        oValue=" encryptedby ";
         this->instantiate=true;
         break;
     }
     case BanDOperatorType::FreshData:{
-        oValue="fresh";
+        oValue=" fresh ";
         this->instantiate=true;
         break;
     }
     case BanDOperatorType::ShareKey:{
-        oValue="shared Key";
+        oValue=" shared Key ";
         this->instantiate=true;
         break;
     }
     case BanDOperatorType::ShareSecret:{
-        oValue="share secret";
+        oValue=" share secret ";
         this->instantiate=true;
         break;
     }
-    case BanDOperatorType::HashKey:{
-        oValue="Hash";
+    case BanDOperatorType::HasKey:{
+        oValue=" has key ";
+        this->instantiate=true;
+        break;
+    }
+    case BanDOperatorType::SecretPassword:
+    {
+        oValue=" has password ";
         this->instantiate=true;
         break;
     }

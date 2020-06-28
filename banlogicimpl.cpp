@@ -4,11 +4,337 @@ using namespace BANLogic;
 
 BANLogicImpl::BANLogicImpl()
 {
+    BanPostulates *p;
+    QList<BanStatementList*> preList;
+    BanDAtom *aP=new BanDAtom(Principal,"");
+    BanDAtom *aQ=new BanDAtom(Principal,"");
+    BanDAtom *aR=new BanDAtom(Principal,"");
+    BanDAtom *aS=new BanDAtom(Principal,""); // trusted Server
+    BanDAtom *K=new BanDAtom(SymKey,"");
+    BanDAtom *aKPriv=new BanDAtom(PrivKey,"");
+    BanDAtom *aKPub=new BanDAtom(PubKey,"");
+    BanDAtom *aF=new BanDAtom(Function,"");
+    BanDAtom *aH=new BanDAtom(Hash,"");
+    aKPriv->setInverseKey(aKPub);
+    aKPub->setInverseKey(aKPriv);
+
+    BanDataC *X=new BanDataC();
+    BanDataC *Y=new BanDataC();
+
+
+    //1: Syntax and informal semantics
+    {
+        //1.1: P believes X:
+        BanStatementList *St1=new BanStatementList({
+                                                       new BanDataList({aP}),
+                                                       new BanDataList({X}),
+                                                       new BanSOperator(BanSOperatorType::believes)
+                                                   });
+
+        //1.2: P sees X:
+        BanStatementList *St2=new BanStatementList({
+                                                       new BanDataList({aP}),
+                                                       new BanDataList({X}),
+                                                       new BanSOperator(BanSOperatorType::sees)
+                                                   });
+        //1.3: P said X:
+        BanStatementList *St3=new BanStatementList({
+                                                       new BanDataList({aP}),
+                                                       new BanDataList({X}),
+                                                       new BanSOperator(BanSOperatorType::said)
+                                                   });
+        //1.4: P controls X:
+        BanStatementList *St4=new BanStatementList({
+                                                       new BanDataList({aP}),
+                                                       new BanDataList({X}),
+                                                       new BanSOperator(BanSOperatorType::controls)
+                                                   });
+
+        //1.5: fresh X:
+        BanStatementList *St5=new BanStatementList({
+                                                       new BanDataList({X,new BanDOperator(BanDOperatorType::FreshData)}),
+                                                   });
+
+        //1.6: P & Q shares key K:
+        BanStatementList *St6=new BanStatementList({
+                                                       new BanDataList({aP,aQ,K,new BanDOperator(BanDOperatorType::ShareKey)}),
+                                                   });
+
+        //1.7: P has K as a public key:
+        BanStatementList *St7=new BanStatementList({
+                                                       new BanDataList({aP,aKPub,new BanDOperator(BanDOperatorType::HasKey)}),
+                                                   });
+
+        //1.8: P and Q knows secret X:
+        BanStatementList *St8=new BanStatementList({
+                                                       new BanDataList({aP,aQ,X,new BanDOperator(BanDOperatorType::ShareSecret)}),
+                                                   });
+
+        //1.9: X is encrypted by Key K:
+        BanStatementList *St9=new BanStatementList({
+                                                       new BanDataList({X,K,new BanDOperator(BanDOperatorType::Encryption)}),
+                                                   });
+
+        //1.10: X combined with the formula Y or <X>Y;
+        BanStatementList *St10=new BanStatementList({
+                                                        new BanDataList({X,Y,new BanDOperator(BanDOperatorType::SecretPassword)}),
+                                                    });
+    }
+
+
+    //2: Logical Postulates
+    //interpretation of messages
+    {
+        //2.1 P believes key K is shared with Q , P sees {X}K ->  P believes Q said X
+        BanStatementList *pre1=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({aP,aQ,K,new BanDOperator(BanDOperatorType::ShareKey)}),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        BanStatementList *pre2=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X,K,new BanDOperator(BanDOperatorType::Encryption)}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        BanStatementList *goal=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({aQ}),
+                                                        new BanDataList({X}),
+                                                        new BanSOperator(BanSOperatorType::said),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        preList.append(pre1);
+        preList.append(pre2);
+        p=new BanPostulates("I1",goal,preList);
+        BANPostulates.append(p);
+    }
+
+    //for public key
+    {
+        //2.2 P believes Q has public key K+ , P sees {X}K- ->  P believes Q said X
+        BanStatementList *pre1=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({aQ,aKPub,new BanDOperator(BanDOperatorType::HasKey)}),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        BanStatementList *pre2=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X,aKPriv,new BanDOperator(BanDOperatorType::Encryption)}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        BanStatementList *goal=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({aQ}),
+                                                        new BanDataList({X}),
+                                                        new BanSOperator(BanSOperatorType::said),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        preList.append(pre1);
+        preList.append(pre2);
+        p=new BanPostulates("I2",goal,preList);
+        BANPostulates.append(p);
+    }
+
+    //for shared secret
+    {
+        //2.2 P believes Y is shared secret between Q and P , P sees <X>Y ->  P believes Q said X
+        BanStatementList *pre1=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({aQ,aP,Y,new BanDOperator(BanDOperatorType::ShareSecret)}),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        BanStatementList *pre2=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X,Y,new BanDOperator(BanDOperatorType::SecretPassword)}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        BanStatementList *goal=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({aQ}),
+                                                        new BanDataList({X}),
+                                                        new BanSOperator(BanSOperatorType::said),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        preList.append(pre1);
+        preList.append(pre2);
+        p=new BanPostulates("I3",goal,preList);
+        BANPostulates.append(p);
+    }
+
+    //3: Nonce verification rule
+    {
+        //3.1: P believes fresh(X), P believes Q said X -> P believes Q believes X
+        BanStatementList *pre1=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X,new BanDOperator(BanDOperatorType::FreshData)}),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        BanStatementList *pre2=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({aQ}),
+                                                        new BanDataList({X}),
+                                                        new BanSOperator(BanSOperatorType::said),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        BanStatementList *goal=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({aQ}),
+                                                        new BanDataList({X}),
+                                                        new BanSOperator(BanSOperatorType::believes),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        preList.append(pre1);
+        preList.append(pre2);
+        p=new BanPostulates("NV",goal,preList);
+        BANPostulates.append(p);
+    }
+
+    //4: Jurisdiction rule
+    {
+        //4.1: P believes Q controls X , P believes Q believes X -> P believes X
+        BanStatementList *pre1=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({aQ}),
+                                                        new BanDataList({X}),
+                                                        new BanSOperator(BanSOperatorType::controls),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        BanStatementList *pre2=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({aQ}),
+                                                        new BanDataList({X}),
+                                                        new BanSOperator(BanSOperatorType::believes),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        BanStatementList *goal=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X}),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        preList.append(pre1);
+        preList.append(pre2);
+        p=new BanPostulates("J",goal,preList);
+        BANPostulates.append(p);
+    }
+
+
+    //5: If a principal sees a formula, then he also sees its components, provided he knows the necessary keys:
+    {
+        //5.1: P sees (X,Y) -> P sees X
+        BanStatementList *pre1=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X,Y,new BanDOperator(BanDOperatorType::concates)}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        BanStatementList *goal=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        preList.append(pre1);
+        p=new BanPostulates("S1",goal,preList);
+        BANPostulates.append(p);
+    }
+
+    {
+        //5.2: P sees <X>Y -> P sees X
+        BanStatementList *pre1=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X,Y,new BanDOperator(BanDOperatorType::SecretPassword)}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        BanStatementList *goal=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        preList.append(pre1);
+        p=new BanPostulates("S2",goal,preList);
+        BANPostulates.append(p);
+    }
+
+    {
+        //5.3: P believes K is shared with Q, P sees {X}K -> P sees X
+        BanStatementList *pre1=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({aQ,aP,K,new BanDOperator(BanDOperatorType::ShareKey)}),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        BanStatementList *pre2=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X,K,new BanDOperator(BanDOperatorType::Encryption)}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        BanStatementList *goal=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        preList.append(pre1);
+        preList.append(pre2);
+        p=new BanPostulates("S3",goal,preList);
+        BANPostulates.append(p);
+    }
+
+    {
+        //5.4: P believes P has K+ as a public key, P sees {X}K+ -> P sees X
+        BanStatementList *pre1=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({aP,aKPub,new BanDOperator(BanDOperatorType::HasKey)}),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        BanStatementList *pre2=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X,aKPub,new BanDOperator(BanDOperatorType::Encryption)}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        BanStatementList *goal=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        preList.append(pre1);
+        preList.append(pre2);
+        p=new BanPostulates("S4",goal,preList);
+        BANPostulates.append(p);
+    }
+
+    {
+        //5.5: P believes Q has K+ as a public key, P sees {X}K- -> P sees X
+        BanStatementList *pre1=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({aQ,aKPub,new BanDOperator(BanDOperatorType::HasKey)}),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        BanStatementList *pre2=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X,aKPriv,new BanDOperator(BanDOperatorType::Encryption)}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        BanStatementList *goal=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        preList.append(pre1);
+        preList.append(pre2);
+        p=new BanPostulates("S5",goal,preList);
+        BANPostulates.append(p);
+
+        pre1->print();
+        cout<<endl;
+        pre2->print();
+        cout<<endl;
+        goal->print();
+        cout<<endl;
+    }
+
 }
 
 void BANLogicImpl::show()
 {
-    try {
+/*
+try {
         BanDataList *dcomp,*d, *newData1,*newData2, *newData3,*newData4, *pm1, *pm2, *mylist1, *mylist2, *newData5, *newData6;
 
 
@@ -510,7 +836,7 @@ void BANLogicImpl::show()
     } catch (BanException &e)
     {
         e.what("Handled exception");
-    }
+    }*/
 
 }
 

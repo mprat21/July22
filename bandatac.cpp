@@ -10,7 +10,7 @@ BANLogic::BanDataC::BanDataC():BanDComponent(BanDComponentType::bAnyData)
 {
     if(this->dataValue=="" || this->dataValue.isEmpty() || this->dataValue.isNull())
     {
-        this->dataValue=QString("_D_%1").arg(dataCount++);
+        this->dataValue=QString("_X%1_").arg(dataCount++);
         this->type=BanDComponentType::bAnyData;
         this->instantiate=false;
         myListdata.append(this);
@@ -195,7 +195,7 @@ bool BANLogic::BanDataC::unify(BANLogic::BanDComponent *value)
                     this-> printQStack.push(this->printQStack.pop()+value->getID()+this->printQStack.pop());
                     break;
                 }
-                case BanDOperatorType::HashKey:{
+                case BanDOperatorType::HasKey:{
                     this-> printQStack.push(this->printQStack.pop()+value->getID()+this->printQStack.pop());
                     this->myListdata.append(op);
                     break;

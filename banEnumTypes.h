@@ -15,9 +15,9 @@ enum class BanDComponentType{bAtom, bOperator, bAnyData};
 
 enum class BanSComponentType{bStatement,bData, bSOperator};
 
-enum class BanDOperatorType {concates, Encryption,FreshData, HashKey,ShareKey,ShareSecret} ;
+enum class BanDOperatorType {concates, Encryption,FreshData, HasKey,ShareKey,ShareSecret, SecretPassword} ;
 
-enum class BanSOperatorType{told, possess, believe, hasJurisdiction,conveyed} ;
+enum class BanSOperatorType{said, possess, believes, controls,conveyed,sees} ;
 
 typedef enum {Principal, SymKey, PubKey, PrivKey, Nonce, Timestamp, Function, Hash, BinaryData} banAtomtype;
 

@@ -11,6 +11,8 @@ protected:
     static int atomCount;
     banAtomtype atype;
     QString aValue;
+    BanDAtom *inverseKey;
+
 
 public:
     BanDAtom();
@@ -27,10 +29,9 @@ public:
     bool getIfMatches() const override;
     virtual void printRPN()override{QTextStream(stdout) <<" "+this->getID()+" "<<flush;};
     virtual void setInstantiate(bool value) override{this->instantiate=value;}
-
-
     ~BanDAtom();
-
+    BanDAtom *getInverseKey() const;
+    void setInverseKey(BanDAtom *value);
 };
 
 }

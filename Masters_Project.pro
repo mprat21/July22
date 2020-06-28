@@ -22,6 +22,7 @@ SOURCES += \
         bandoperator.cpp \
         banexception.cpp \
         banlogicimpl.cpp \
+        banpostulates.cpp \
         banscomponent.cpp \
         bansoperator.cpp \
         banstatementlist.cpp \
@@ -38,6 +39,7 @@ HEADERS += \
     bandoperator.h \
     banexception.h \
     banlogicimpl.h \
+    banpostulates.h \
     banscomponent.h \
     bansoperator.h \
     banstatementlist.h

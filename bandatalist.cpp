@@ -104,20 +104,24 @@ BANLogic::BanDataList::BanDataList(QList<BanDComponent *> dList):BanSComponent(B
                 break;
             }
             case BanDOperatorType::FreshData:{
-                this->printStack.push(this->printStack.pop()+ptr->getID()+this->printStack.pop());
+                this->printStack.push(ptr->getID()+"("+this->printStack.pop()+")");
                 //this->dataList.append(myOperator);
                 break;
             }
             case BanDOperatorType::ShareKey:{
-                this-> printStack.push(this->printStack.pop()+ptr->getID()+this->printStack.pop());
+                this-> printStack.push(this->printStack.pop()+","+this->printStack.pop()+ptr->getID()+this->printStack.pop());
                 break;
             }
             case BanDOperatorType::ShareSecret:{
+                this-> printStack.push(this->printStack.pop()+","+this->printStack.pop()+ptr->getID()+this->printStack.pop());
+                break;
+            }
+            case BanDOperatorType::HasKey:{
                 this-> printStack.push(this->printStack.pop()+ptr->getID()+this->printStack.pop());
                 break;
             }
-            case BanDOperatorType::HashKey:{
-                this-> printStack.push(this->printStack.pop()+ptr->getID()+this->printStack.pop());
+            case BanDOperatorType::SecretPassword:{
+                this-> printStack.push("<"+this->printStack.pop()+">"+this->printStack.pop());
                 break;
             }
             default:

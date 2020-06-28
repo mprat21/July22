@@ -45,11 +45,11 @@ BANLogic::BanStatementList::BanStatementList(QList<BanSComponent *> sList):BanSC
             BanSOperator *comp1=dynamic_cast<BanSOperator *>(ptr);
             switch (comp1->getStOptype())
             {
-            case BanSOperatorType::told:{
+            case BanSOperatorType::said:{
                 this->printStStack.push(this->printStStack.pop()+comp1->getID()+this->printStStack.pop());
                 break;
             }
-            case BanSOperatorType::believe:{
+            case BanSOperatorType::believes:{
                 this->printStStack.push(this->printStStack.pop()+comp1->getID()+this->printStStack.pop());
                 break;
             }
@@ -61,7 +61,11 @@ BANLogic::BanStatementList::BanStatementList(QList<BanSComponent *> sList):BanSC
                 this->printStStack.push(this->printStStack.pop()+comp1->getID()+this->printStStack.pop());
                 break;
             }
-            case BanSOperatorType::hasJurisdiction:{
+            case BanSOperatorType::controls:{
+                this->printStStack.push(this->printStStack.pop()+comp1->getID()+this->printStStack.pop());
+                break;
+            }
+            case BanSOperatorType::sees:{
                 this->printStStack.push(this->printStStack.pop()+comp1->getID()+this->printStStack.pop());
                 break;
             }
@@ -322,7 +326,6 @@ bool BanStatementList::getIfMatches() const
 void BANLogic::BanStatementList::print()
 {
     //BanStatementList *tp=new BanStatementList(this->stList);
-
     foreach(QString ptr, this->printStStack)
     {
         QTextStream(stdout)<<ptr;

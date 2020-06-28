@@ -104,10 +104,10 @@ bool BANLogic::BanDAtom::unify(BanDComponent *value)
             {
                 if(this->getInstantiate()==false && value->getInstantiate()==true)
                 {
-                    cout<<endl;
-
-                    QTextStream(stdout)<<this->getID()<<" = " <<value->getID() <<endl;
+                    BanDAtom *a =dynamic_cast<BanDAtom *>(value);
+                    QTextStream(stdout)<<this->getID()<<" = " <<a->getID() <<endl;
                     this->setId(value->getID());
+                    this->inverseKey = a->inverseKey;
                     this->unifies=true;
                 }
                 else if(this->getInstantiate()==true && value->getInstantiate()==false)
@@ -177,6 +177,17 @@ BanDAtom::~BanDAtom()
 }
 
 
+BanDAtom *BanDAtom::getInverseKey() const
+{
+    return inverseKey;
+}
+
+void BanDAtom::setInverseKey(BanDAtom *value)
+{
+    if ( (atype==banAtomtype::PubKey) || (atype==banAtomtype::PrivKey))
+        inverseKey = value;
+}
+
 BANLogic::BanDAtom::BanDAtom():BanDComponent(BanDComponentType::bAtom)
 {
 }
@@ -189,55 +200,56 @@ BANLogic::BanDAtom::BanDAtom(banAtomtype aTy, QString aVal):BanDComponent(BanDCo
         {
         case banAtomtype::Principal :
         {
-            this->aValue=QString("_P_%1").arg(atomCount++);
+            this->aValue=QString("_P%1_").arg(atomCount++);
             this->atype=banAtomtype::Principal;
             break;
         }
         case banAtomtype::Nonce:
         {
-            this->aValue=QString("_N_%1").arg(atomCount++);
+            this->aValue=QString("_N%1_").arg(atomCount++);
             this->atype=banAtomtype::Nonce;
             break;
         }
         case banAtomtype::PubKey:
         {
-            this->aValue=QString("_K+_%1").arg(atomCount++);
+            this->aValue=QString("_K%1+_").arg(atomCount++);
             this->atype=banAtomtype::PubKey;
             break;
         }
         case banAtomtype::SymKey:
         {
-            this->aValue=QString("_K_%1").arg(atomCount++);
+            this->aValue=QString("_K%1_").arg(atomCount++);
             this->atype=banAtomtype::SymKey;
+            this->inverseKey = this;
             break;
         }
         case banAtomtype::PrivKey:
         {
-            this->aValue=QString("_K-_%1").arg(atomCount++);
+            this->aValue=QString("_K%1-_").arg(atomCount++);
             this->atype=banAtomtype::PrivKey;
             break;
         }
         case banAtomtype::Function:
         {
-            this->aValue=QString("_F_%1").arg(atomCount++);
+            this->aValue=QString("_F%1_").arg(atomCount++);
             this->atype=banAtomtype::Function;
             break;
         }
         case banAtomtype::Hash:
         {
-            this->aValue=QString("_H_%1").arg(atomCount++);
+            this->aValue=QString("_H%1_").arg(atomCount++);
             this->atype=banAtomtype::Hash;
             break;
         }
         case banAtomtype::Timestamp:
         {
-            this->aValue=QString("_TS_%1").arg(atomCount++);
+            this->aValue=QString("_TS%1_").arg(atomCount++);
             this->atype=banAtomtype::Timestamp;
             break;
         }
         case banAtomtype::BinaryData:
         {
-            this->aValue=QString("_"+aVal+"_%1").arg(atomCount++);
+            this->aValue=QString("_Y%1_").arg(atomCount++);
             this->atype=banAtomtype::BinaryData;
             break;
         }
