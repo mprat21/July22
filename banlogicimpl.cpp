@@ -320,10 +320,28 @@ BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("S5",goal,preList);
         BANPostulates.append(p);
+    }
+
+    // 6 :If one part of a formula is fresh, then the entire formula must also be fresh:
+    {
+        //6.1 : P believes fresh (X) -> P believes fresh (X,Y)
+        BanStatementList *pre1=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X,new BanDOperator(BanDOperatorType::FreshData)}),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+
+        BanStatementList *goal=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X,Y, new BanDOperator(BanDOperatorType::concates),new BanDOperator(BanDOperatorType::FreshData)}),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        preList.append(pre1);
+        p=new BanPostulates("S5",goal,preList);
+        BANPostulates.append(p);
 
         pre1->print();
         cout<<endl;
-        pre2->print();
         cout<<endl;
         goal->print();
         cout<<endl;
