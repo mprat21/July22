@@ -22,6 +22,16 @@ QList<BanStatementList *> BanPostulates::getPComponentList() const
     return pComponentList;
 }
 
+void BanPostulates::print()
+{
+
+}
+
+void BanPostulates::printRPN()
+{
+
+}
+
 BanPostulates::BanPostulates()
 {
 

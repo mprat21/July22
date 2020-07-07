@@ -2,14 +2,14 @@
 #include "banlogicimpl.h"
 using namespace BANLogic;
 
-BANLogicImpl::BANLogicImpl()
+BANLogic::BANLogicImpl::BANLogicImpl()
 {
     BanPostulates *p;
     QList<BanStatementList*> preList;
     BanDAtom *aP=new BanDAtom(Principal,"");
     BanDAtom *aQ=new BanDAtom(Principal,"");
     BanDAtom *aR=new BanDAtom(Principal,"");
-    BanDAtom *aS=new BanDAtom(Principal,""); // trusted Server
+    BanDAtom *aS=new BanDAtom(Principal,"");  // trusted Server
     BanDAtom *K=new BanDAtom(SymKey,"");
     BanDAtom *aKPriv=new BanDAtom(PrivKey,"");
     BanDAtom *aKPub=new BanDAtom(PubKey,"");
@@ -17,10 +17,8 @@ BANLogicImpl::BANLogicImpl()
     BanDAtom *aH=new BanDAtom(Hash,"");
     aKPriv->setInverseKey(aKPub);
     aKPub->setInverseKey(aKPriv);
-
     BanDataC *X=new BanDataC();
     BanDataC *Y=new BanDataC();
-
 
     //1: Syntax and informal semantics
     {
@@ -80,7 +78,6 @@ BANLogicImpl::BANLogicImpl()
                                                         new BanDataList({X,Y,new BanDOperator(BanDOperatorType::SecretPassword)}),
                                                     });
     }
-
 
     //2: Logical Postulates
     //interpretation of messages
@@ -217,7 +214,6 @@ BANLogicImpl::BANLogicImpl()
         BANPostulates.append(p);
     }
 
-
     //5: If a principal sees a formula, then he also sees its components, provided he knows the necessary keys:
     {
         //5.1: P sees (X,Y) -> P sees X
@@ -345,13 +341,14 @@ BANLogicImpl::BANLogicImpl()
         cout<<endl;
         goal->print();
         cout<<endl;
+        p->print();
+        p->printRPN();
     }
-
 }
 
 void BANLogicImpl::show()
 {
-/*
+    /*
 try {
         BanDataList *dcomp,*d, *newData1,*newData2, *newData3,*newData4, *pm1, *pm2, *mylist1, *mylist2, *newData5, *newData6;
 

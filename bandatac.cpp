@@ -34,7 +34,6 @@ QString BANLogic::BanDataC::getID()
     return this->dataValue;
 }
 
-
 void BANLogic::BanDataC::print()
 {
     foreach(QString ptr,this->printQStack)

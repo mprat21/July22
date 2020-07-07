@@ -18,6 +18,9 @@ public:
     BanStatementList *getGoal() const;
     QList<BanStatementList *> getPrerequisites() const;
     QList<BanStatementList *> getPComponentList() const;
+    void print();
+    void printRPN();
+
 };
 
 #endif // BANPOSTULATES_H
