@@ -1,6 +1,8 @@
 #include "bandatac.h"
 #include "bandatalist.h"
 using namespace BANLogic;
+
+//
 namespace BANLogic {
 
 int BanDataList::datacount=1;
