@@ -1,6 +1,7 @@
 #include "bandatac.h"
 #include "banlogicimpl.h"
 using namespace BANLogic;
+namespace BANLogic {
 
 BANLogic::BANLogicImpl::BANLogicImpl()
 {
@@ -855,4 +856,4 @@ try {
 
 }
 
-
+}

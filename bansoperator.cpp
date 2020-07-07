@@ -1,5 +1,7 @@
 #include "bansoperator.h"
 using namespace BANLogic;
+namespace BANLogic {
+
 BanSOperatorType BANLogic::BanSOperator::getStOptype() const
 {
     return astype;
@@ -130,4 +132,5 @@ bool BANLogic::BanSOperator::getIfMatches() const
 void BANLogic::BanSOperator::setId(const QString &value)
 {
     soValue=value;
+}
 }

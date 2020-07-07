@@ -1,4 +1,6 @@
 #include "bandatac.h"
+namespace BANLogic {
+
 int BANLogic::BanDataC::dataCount=1;
 
 QStack<QString> BANLogic::BanDataC::getPrintQStack() const
@@ -273,4 +275,5 @@ void BANLogic::BanDataC::printRPN()
         }
         //QTextStream(stdout)<<ptr->getID();
     }
+}
 }

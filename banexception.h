@@ -4,6 +4,7 @@
 #include<iostream>
 #include <QTextStream>
 
+namespace BANLogic {
 
 class BanException: public QException
 {
@@ -15,5 +16,5 @@ public:
     virtual QException *clone() const override;
     virtual const void what(QString str) const noexcept;
 };
-
+}
 #endif // BANEXCEPTION_H

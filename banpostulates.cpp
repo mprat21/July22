@@ -1,6 +1,7 @@
 #include "banpostulates.h"
 
 using namespace BANLogic;
+namespace BANLogic {
 
 QString BanPostulates::getRule() const
 {
@@ -40,4 +41,5 @@ BanPostulates::BanPostulates()
 BanPostulates::BanPostulates(QString ruleName, BanStatementList *g, QList<BanStatementList *> prerequisites)
 {
 
+}
 }

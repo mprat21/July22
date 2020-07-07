@@ -1,6 +1,8 @@
 #include "bandatac.h"
 #include "bandatalist.h"
 using namespace BANLogic;
+namespace BANLogic {
+
 int BanDataList::datacount=1;
 
 void BANLogic::BanDataList::printRPN()
@@ -467,4 +469,5 @@ bool BanDataList::getIfMatches() const
 void BanDataList::setId(const QString &value)
 {
     dataID=value;
+}
 }

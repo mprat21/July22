@@ -1,5 +1,8 @@
 #include "banscomponent.h"
 using namespace BANLogic;
+
+namespace BANLogic {
+
 BanSComponentType BANLogic::BanSComponent::getStype() const
 {
     return stype;
@@ -17,3 +20,4 @@ BanSComponent::BanSComponent(QList<BanSComponent *> sList)
 {
 }
 
+}
