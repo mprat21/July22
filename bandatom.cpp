@@ -1,6 +1,8 @@
 #include "bandatac.h"
 #include "bandatom.h"
 using namespace BANLogic;
+namespace BANLogic {
+
 int BANLogic::BanDAtom::atomCount=1;
 
 banAtomtype BANLogic::BanDAtom::getAtype() const
@@ -269,4 +271,4 @@ BANLogic::BanDAtom::BanDAtom(banAtomtype aTy, QString aVal):BanDComponent(BanDCo
     }
 }
 
-
+}

@@ -1,5 +1,6 @@
 #include "bandoperator.h"
 using namespace BANLogic;
+namespace BANLogic {
 
 BanDOperatorType BANLogic::BanDOperator::getDOtype() const
 {
@@ -180,4 +181,5 @@ BANLogic::BanDOperator::BanDOperator(BanDOperatorType adTy):BanDComponent(BanDCo
     }
     }
 
+}
 }

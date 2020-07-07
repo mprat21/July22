@@ -1,5 +1,7 @@
 #include "banstatementlist.h"
 using namespace BANLogic;
+namespace BANLogic {
+
 int BANLogic::BanStatementList::statementCount=1;
 
 QList<BanSComponent *> BanStatementList::getStList() const
@@ -336,4 +338,5 @@ void BANLogic::BanStatementList::print()
 void BANLogic::BanStatementList::setId(const QString &value)
 {
     stid=value;
+}
 }
