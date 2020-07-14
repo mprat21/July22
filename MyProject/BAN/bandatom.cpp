@@ -271,4 +271,32 @@ BANLogic::BanDAtom::BanDAtom(banAtomtype aTy, QString aVal):BanDComponent(BanDCo
     }
 }
 
+BANLogic::BanDAtom::BanDAtom(BanDAtom &orig):BanDComponent(BanDComponentType::bAtom)
+{
+    setId(orig.getID());
+    atype = orig.atype;
+    setInstantiate(orig.getInstantiate());
+    inverseKey = orig.inverseKey;
+    //allAtom.append(this);
+}
+
+}
+
+
+QString BANLogic::BanDAtom::getString()
+{
+     return this->aValue;
+}
+
+bool BANLogic::BanDAtom::operator ==(const BanDComponent &other)
+{
+    bool equals = true;
+    const BanDAtom &a = dynamic_cast<const BanDAtom &>(other);
+    if (atype != a.atype) {
+        equals = false;
+    } else {
+         if(aValue == a.aValue) equals = true;
+         else equals = false;
+    }
+    return equals;
 }

@@ -12,6 +12,8 @@ protected:
 public:
     BanDOperator();
     BanDOperator(BanDOperatorType adTy);
+    BanDOperator(BanDOperator &orig);
+
     virtual QString getID() override{return oValue;}
     virtual void print() override{QTextStream(stdout)<<this->oValue<<flush;}
     BanDOperatorType getDOtype() const;
@@ -26,6 +28,11 @@ public:
     virtual void setInstantiate(bool value) override{this->instantiate=value;}
 
 
+
+    // BanDComponent interface
+public:
+    virtual QString getString() override;
+    virtual bool operator ==(const BanDComponent &other) override;
 };
 }
 #endif // BANDOPERATOR_H

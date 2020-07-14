@@ -3,6 +3,13 @@
 using namespace BANLogic;
 namespace BANLogic {
 
+bool BANLogic::BANLogicImpl::getMatchingPostulates(LPT::Statement *stmt, LPT::PostulatePtrList &pl)
+{
+}
+
+bool BANLogic::BANLogicImpl::getAllInstantiatedPostulates(LPT::Postulate *p, LPT::PostulatePtrList &ipl)
+{
+}
 BANLogic::BANLogicImpl::BANLogicImpl()
 {
     BanPostulates *p;
@@ -105,6 +112,7 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("I1",goal,preList);
         BANPostulates.append(p);
+        preList.clear();
     }
 
     //for public key
@@ -131,6 +139,8 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("I2",goal,preList);
         BANPostulates.append(p);
+        preList.clear();
+
     }
 
     //for shared secret
@@ -157,6 +167,8 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("I3",goal,preList);
         BANPostulates.append(p);
+        preList.clear();
+
     }
 
     //3: Nonce verification rule
@@ -185,6 +197,8 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("NV",goal,preList);
         BANPostulates.append(p);
+        preList.clear();
+
     }
 
     //4: Jurisdiction rule
@@ -213,6 +227,8 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("J",goal,preList);
         BANPostulates.append(p);
+        preList.clear();
+
     }
 
     //5: If a principal sees a formula, then he also sees its components, provided he knows the necessary keys:
@@ -231,6 +247,8 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre1);
         p=new BanPostulates("S1",goal,preList);
         BANPostulates.append(p);
+        preList.clear();
+
     }
 
     {
@@ -248,6 +266,8 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre1);
         p=new BanPostulates("S2",goal,preList);
         BANPostulates.append(p);
+        preList.clear();
+
     }
 
     {
@@ -271,6 +291,8 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("S3",goal,preList);
         BANPostulates.append(p);
+        preList.clear();
+
     }
 
     {
@@ -294,6 +316,7 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("S4",goal,preList);
         BANPostulates.append(p);
+        preList.clear();
     }
 
     {
@@ -317,7 +340,47 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("S5",goal,preList);
         BANPostulates.append(p);
+        preList.clear();
     }
+
+    {
+        //5.6: P sees <X>Y -> P sees Y
+        BanStatementList *pre1=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X,Y,new BanDOperator(BanDOperatorType::SecretPassword)}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        BanStatementList *goal=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({Y}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        preList.append(pre1);
+        p=new BanPostulates("S6",goal,preList);
+        BANPostulates.append(p);
+        preList.clear();
+
+    }
+    {
+        //5.7: P sees (X,Y) -> P sees Y
+        BanStatementList *pre1=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X,Y,new BanDOperator(BanDOperatorType::concates)}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        BanStatementList *goal=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({Y}),
+                                                        new BanSOperator(BanSOperatorType::sees)
+                                                    });
+        preList.append(pre1);
+        p=new BanPostulates("S7",goal,preList);
+        BANPostulates.append(p);
+        preList.clear();
+
+    }
+
+
 
     // 6 :If one part of a formula is fresh, then the entire formula must also be fresh:
     {
@@ -334,16 +397,39 @@ BANLogic::BANLogicImpl::BANLogicImpl()
                                                         new BanSOperator(BanSOperatorType::believes)
                                                     });
         preList.append(pre1);
-        p=new BanPostulates("S5",goal,preList);
+        p=new BanPostulates("F1",goal,preList);
         BANPostulates.append(p);
+        preList.clear();
+    }
+    {
+        //6.2 : P believes fresh (Y) -> P believes fresh (X,Y)
+        BanStatementList *pre1=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({Y,new BanDOperator(BanDOperatorType::FreshData)}),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
 
-        pre1->print();
-        cout<<endl;
-        cout<<endl;
-        goal->print();
-        cout<<endl;
-        p->print();
-        p->printRPN();
+        BanStatementList *goal=new BanStatementList({
+                                                        new BanDataList({aP}),
+                                                        new BanDataList({X,Y, new BanDOperator(BanDOperatorType::concates),new BanDOperator(BanDOperatorType::FreshData)}),
+                                                        new BanSOperator(BanSOperatorType::believes)
+                                                    });
+        preList.append(pre1);
+        p=new BanPostulates("F2",goal,preList);
+        BANPostulates.append(p);
+        preList.clear();
+
+
+    }
+    {
+        foreach(BanPostulates *p,BANPostulates)
+        {
+            cout<<"Print in Infix notation:"<<endl;
+            p->print();
+            cout<<endl;
+           // cout<<"Print in RPN notation:"<<endl;
+           // p->printRPN();
+        }
     }
 }
 

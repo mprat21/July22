@@ -67,8 +67,6 @@ bool BANLogic::BanDOperator::match(BanDComponent *value)
         throw new BanException("Unrecognised Component Type in banDOperator::match()");
     }
     }
-
-
     return this->ifMatches;
 }
 
@@ -134,6 +132,13 @@ BANLogic::BanDOperator::BanDOperator():BanDComponent(BanDComponentType::bOperato
 
 }
 
+BanDOperator::BanDOperator(BanDOperator &orig):BanDComponent(BanDComponentType::bOperator)
+{
+    setId(orig.getID());
+    adtype = orig.adtype;
+    setInstantiate(orig.getInstantiate());
+}
+
 BANLogic::BanDOperator::BanDOperator(BanDOperatorType adTy):BanDComponent(BanDComponentType::bOperator), adtype(adTy)
 {
     switch(adTy)
@@ -180,6 +185,23 @@ BANLogic::BanDOperator::BanDOperator(BanDOperatorType adTy):BanDComponent(BanDCo
         instantiate=false;
     }
     }
+}
 
+QString BANLogic::BanDOperator::getString()
+{
+    return oValue;
+}
+
+bool BANLogic::BanDOperator::operator ==(const BanDComponent &other)
+{
+    bool equals = true;
+    const BanDOperator &o = dynamic_cast<const BanDOperator &>(other);
+    if (adtype != o.adtype) {
+        equals = false;
+    } else {
+         if(oValue == o.oValue) equals = true;
+         else equals = false;
+    }
+    return equals;
 }
 }

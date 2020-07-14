@@ -19,10 +19,10 @@ protected:
 public:
     BanDataList();
     BanDataList(QList<BanDComponent*> dList1);
-
+    BanDataList(BanDataList &orig);
     virtual void printRPN() override;
     virtual void print() override;
-    virtual QString getID() override{return dataID;}
+    virtual  QString  getID() override{return dataID;}
     QList<BanDComponent *> getDataList();
     QStack<QString> getPrintStack();
     virtual bool match(BanSComponent &Scomp) override;
@@ -33,6 +33,11 @@ public:
    // QList<BanDataList *> getDList1() const;
 
     virtual void setId(const QString &value) override;
+
+    // BanSComponent interface
+public:
+    virtual QString getString() override;
+    virtual bool operator ==(const BanSComponent &other) override;
 };
 }
 #endif // BANDATALIST_H

@@ -20,6 +20,17 @@ BANLogic::BanDataC::BanDataC():BanDComponent(BanDComponentType::bAnyData)
     }
 }
 
+BanDataC::BanDataC(BanDataC &orig):BanDComponent(BanDComponentType::bAnyData)
+{
+    setId(orig.getID());
+    type = orig.type;
+    dList=orig.dList;
+    myListdata=orig.myListdata;
+    printQStack=orig.printQStack;
+    instantiate=orig.instantiate;
+    //myListdata.append(this);
+}
+
 void BANLogic::BanDataC::setDtype(QString dType)
 {
     if(dType=="bAnyData")
@@ -91,8 +102,8 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
                 }
                 case BanDComponentType::bOperator:
                 {
-                   // if(val->getInstantiate()==true)
-                        ifMatches=false;
+                    // if(val->getInstantiate()==true)
+                    ifMatches=false;
                     break;
                 }
                 case BanDComponentType::bAnyData:
@@ -125,7 +136,7 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
                 case BanDComponentType::bOperator:
                 {
                     //if(this->getInstantiate()==true)
-                        ifMatches=false;
+                    ifMatches=false;
                     break;
                 }
                 case BanDComponentType::bAnyData:
@@ -143,7 +154,7 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent *val)
             }
         }
     }
-   // this->dataValue=printQStack.top();
+    // this->dataValue=printQStack.top();
     return ifMatches;
 }
 
@@ -173,12 +184,12 @@ bool BANLogic::BanDataC::unify(BANLogic::BanDComponent *value)
                 {
                 case BanDOperatorType::concates:{
                     this->printQStack.push(this->printQStack.pop()+","+this->printQStack.pop());
-                     this->myListdata.append(op);
+                    this->myListdata.append(op);
                     break;
                 }
                 case BanDOperatorType::Encryption:{
                     this->printQStack.push("{"+this->printQStack.pop()+"}"+this->printQStack.pop());
-                     this->myListdata.append(op);
+                    this->myListdata.append(op);
 
                     break;
                 }
@@ -211,7 +222,7 @@ bool BANLogic::BanDataC::unify(BANLogic::BanDComponent *value)
         }
         else if(value->getDtype()==BanDComponentType::bAnyData)
         {
-           // QTextStream(stdout) <<this->getID()+ " " <<flush;
+            // QTextStream(stdout) <<this->getID()+ " " <<flush;
 
             BanDataC *comp2=dynamic_cast<BanDataC *>(this);
             if(comp2->getInstantiate()==true)
@@ -221,7 +232,7 @@ bool BANLogic::BanDataC::unify(BANLogic::BanDComponent *value)
                 unifies=true;
             }
             else
-                 unifies=false;
+                unifies=false;
             //this->getMyListdata().append(value);
 
         }
@@ -247,7 +258,7 @@ QList<BANLogic::BanDComponent *> BANLogic::BanDataC::getMyListdata() const
 
 void BANLogic::BanDataC::printRPN()
 {
-    foreach(BanDComponent *ptr,this->getMyListdata())
+    foreach(BanDComponent *ptr,this->myListdata)
     {
         switch(ptr->getDtype())
         {
@@ -275,5 +286,115 @@ void BANLogic::BanDataC::printRPN()
         }
         //QTextStream(stdout)<<ptr->getID();
     }
+}
+
+QString BANLogic::BanDataC::getString()
+{
+    QString s = "";
+    foreach(BanDComponent *ptr,this->myListdata)
+    {
+        switch(ptr->getDtype())
+        {
+        case BanDComponentType::bAtom:
+        {
+            BanDAtom *d1=dynamic_cast<BanDAtom *>(ptr);
+            s.append(QString("#(") + d1->getString()+ ")");
+            break;
+        }
+        case BanDComponentType::bOperator:
+        {
+            BanDOperator *d1=dynamic_cast<BanDOperator *>(ptr);
+            s.append(QString("#(") + d1->getString()+ ")");
+            break;
+        }
+        case BanDComponentType::bAnyData:
+        {
+            QTextStream(stdout) <<ptr->getString()+" "<<flush;
+            break;
+        }
+        default:
+        {
+            throw new BanException("Unrecognised Component Type in banDataC::getString()");
+        }
+        }
+    }
+    return s;
+}
+
+bool BANLogic::BanDataC::operator ==(const BANLogic::BanDComponent &other)
+{
+    bool equals = true;
+    const BanDataC &d = dynamic_cast<const BanDataC &>(other);
+    if (type != d.type)
+    {
+        if(type==BanDComponentType::bAnyData)
+        {
+            if(this->getInstantiate()==false)
+            {
+                switch(d.getDtype())
+                {
+                case BanDComponentType::bAtom:
+                {
+                    if(d.getInstantiate()==true)
+                        equals=true;
+                    else equals=false;
+                    break;
+                }
+                case BanDComponentType::bOperator:
+                {
+                    // if(val->getInstantiate()==true)
+                    equals=false;
+                    break;
+                }
+                case BanDComponentType::bAnyData:
+                {
+                    if(d.getInstantiate()==true)
+                        equals=true;
+                    else equals=false;
+                    break;
+                }
+                default:
+                {
+                    throw new BanException("Unrecognised Component Type in banDataC::operator ==()");
+                }
+                }
+            }
+            equals = false;
+        }
+        else if (d.type == BanDComponentType::bAnyData)
+        {
+            if(d.getInstantiate()==false)
+            {
+                switch(this->getDtype())
+                {
+                case BanDComponentType::bAtom:
+                {
+                    if(this->getInstantiate()==true)
+                        equals=true;
+                    else equals=false;
+                    break;
+                }
+                case BanDComponentType::bOperator:
+                {
+                    //if(this->getInstantiate()==true)
+                    equals=false;
+                    break;
+                }
+                case BanDComponentType::bAnyData:
+                {
+                    if(this->getInstantiate()==true)
+                        equals=true;
+                    else equals=false;
+                    break;
+                }
+                default:
+                {
+                    throw new BanException("Unrecognised Component Type in banDataC::operator ==()");
+                }
+                }
+            }
+        }
+    }
+    return equals;
 }
 }

@@ -17,6 +17,8 @@ protected:
 
 public:
     BanDataC();
+    BanDataC(BanDataC &orig);
+
    // BanDataC(QList<BanDComponent*> dList1);
     virtual void setDtype(QString dType) override;
     virtual void setId(const QString &value) override;
@@ -31,6 +33,11 @@ public:
     QStack<QString> getPrintQStack() const;
     virtual void setInstantiate(bool value) override{this->instantiate=value;}
 
+
+    // BanDComponent interface
+public:
+    virtual QString getString() override;
+    virtual bool operator ==(const BanDComponent &other) override;
 };
 }
 #endif // BANDATAC_H

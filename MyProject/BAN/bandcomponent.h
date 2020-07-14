@@ -25,6 +25,10 @@ public:
     virtual bool unify(BanDComponent *value)=0;
     virtual bool getIfMatches() const=0;
     virtual void setInstantiate(bool value)=0;
+    virtual QString getString() =0;
+    virtual bool operator==(const BanDComponent &other) =0;
+
+
 };
 }
 
