@@ -32,13 +32,13 @@ BanStatementList::BanStatementList(BanStatementList &orig):BanSComponent(BanSCom
     }
     case BanSComponentType::bSOperator:
     {
-       BanSOperator *o=dynamic_cast<BanSOperator*>(&orig);
+        BanSOperator *o=dynamic_cast<BanSOperator*>(&orig);
         oper=o;
         break;
     }
     case BanSComponentType::bData:
     {
-       BanDataList *dList=dynamic_cast<BanDataList*>(&orig);
+        BanDataList *dList=dynamic_cast<BanDataList*>(&orig);
         datas=dList;
         break;
     }
@@ -374,6 +374,15 @@ void BANLogic::BanStatementList::setId(const QString &value)
 
 bool BANLogic::BanStatementList::operator ==(const LPT::Statement &stmt)
 {
+    bool equals = true;
+    const BanStatementList *s = dynamic_cast<const BanStatementList *>(&stmt);
+    if (s == nullptr) {
+        // if passed stmt is not ban statement, comparison fails
+        equals = false;
+    } else {
+        equals = *this == dynamic_cast<const BanSComponent &>(stmt);
+    }
+    return equals;
 }
 
 QString BANLogic::BanStatementList::getString()
@@ -392,7 +401,89 @@ QString BANLogic::BanStatementList::getString()
 }
 
 
-bool BANLogic::BanStatementList::operator ==(const BanSComponent &other)
+bool BANLogic::BanStatementList::operator ==(const BanSComponent &Scomp)
 {
+    bool equals=false;
+    const BanStatementList &data=dynamic_cast<const BanStatementList&>(Scomp);
+    QList<BanSComponent*> mylist1=this->stList;
+    QList<BanSComponent*> mylist2=data.stList;
+    int mycount=0;
+    switch(Scomp.getStype())
+    {
+    case BanSComponentType::bStatement:
+    {
+        if(mylist1.size()==mylist2.size())
+        {
+            for(int i=0; i<mylist1.size(); i++)
+            {
+                switch(mylist1.value(i)->getStype())
+                {
+                case BanSComponentType::bData:
+                {
+                    BanDataList *d1=dynamic_cast<BanDataList*>(mylist1.value(i));
+                    BanDataList *d2=dynamic_cast<BanDataList*>(mylist2.value(i));
+                    if(d1->operator==(*d2))
+                    {
+                        equals=true;
+                        mycount++;
+                    }
+                    else
+                    {
+                        equals=false;
+                    }
+                    break;
+                }
+                case BanSComponentType::bSOperator:
+                {
+                    BanSOperator *op1=dynamic_cast<BanSOperator*>(mylist1.value(i));
+                    BanSOperator *op2=dynamic_cast<BanSOperator*>(mylist2.value(i));
+                    if(op1->operator==(*op2))
+                    {
+                        equals=true;
+                        mycount++;
+                    }
+                    else
+                    {
+                        equals=false;
+                    }
+                    break;
+                }
+                case BanSComponentType::bStatement:
+                {
+                    BanSComponent *s1=dynamic_cast<BanStatementList*>(mylist1.value(i));
+                    BanSComponent *s2=dynamic_cast<BanStatementList*>(mylist2.value(i));
+                    if(s1->operator ==(*s2))
+                    {
+                        equals=true;
+                        mycount++;
+                    }
+                    else if(s1->getInstantiate()==false && s2->getInstantiate()==true)
+                    {
+                        equals=true;
+                        mycount++;
+                    }
+                    break;
+                }
+
+                }
+                if(mycount==mylist2.size())
+                {
+                    equals=true;
+                }
+                else equals=false;
+            }
+        }
+        break;
+    }
+    case BanSComponentType::bData:{
+        equals=false;
+        break;
+    }
+    case BanSComponentType::bSOperator:{
+        equals=false;
+        break;
+    }
+    }
+    return equals;
 }
 }
