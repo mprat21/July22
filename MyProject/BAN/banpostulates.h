@@ -8,21 +8,27 @@ class BanPostulates: public LPT::Postulate
 {
 private:
     QString rule;
-    BanStatementList *goal;
-    QList<BanStatementList*> prerequisites,temp;
+    BanRuleId id;
+    BanStatementList *goals;
+    QList<BanStatementList*> prereq,temp;
     QList<BanSComponent*> pComponentList;
     QList<BanPostulates*> allPostulate;
+
+
 
 public:
     BanPostulates();
     BanPostulates(QString ruleName, BanStatementList *g, QList<BanStatementList*> prerequisites);
+    BanPostulates(BanRuleId ruleid, LPT::Statement *pGoal, LPT::StatementPtrList &prereq);
     BanPostulates(BanPostulates &orig);
     QString getRule() const;
-    BanStatementList *getBanGoal() const;
-    QList<BanStatementList *> getBanPrerequisites(QString rule) const;
+    QList<BanStatementList *> getBanPrerequisites(BanRuleId rule) const;
     QList<BanSComponent*> getPComponentList() const;
     void print();
     void printRPN();
+    inline BanRuleId getRuleID() {return id;}
+    inline BanStatementList *getBanGoal() {return dynamic_cast<BanStatementList *>(goal);}
+
 
     // Postulate interface
 public:

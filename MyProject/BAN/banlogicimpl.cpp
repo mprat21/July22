@@ -5,14 +5,19 @@ namespace BANLogic {
 
 bool BANLogic::BANLogicImpl::getMatchingPostulates(LPT::Statement *stmt, LPT::PostulatePtrList &pl)
 {
+    return true;
 }
 
 bool BANLogic::BANLogicImpl::getAllInstantiatedPostulates(LPT::Postulate *p, LPT::PostulatePtrList &ipl)
 {
+    return true;
+
 }
 BANLogic::BANLogicImpl::BANLogicImpl()
 {
     BanPostulates *p;
+    LPT::StatementPtrList preList2;
+
     QList<BanStatementList*> preList;
     BanDAtom *aP=new BanDAtom(Principal,"");
     BanDAtom *aQ=new BanDAtom(Principal,"");
@@ -112,6 +117,8 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("I1",goal,preList);
         BANPostulates.append(p);
+        p=new BanPostulates(BanRuleId::I1,goal,preList2);
+        post.append(p);
         preList.clear();
     }
 
@@ -139,6 +146,8 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("I2",goal,preList);
         BANPostulates.append(p);
+        p=new BanPostulates(BanRuleId::I2,goal,preList2);
+        post.append(p);
         preList.clear();
 
     }
@@ -167,6 +176,8 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("I3",goal,preList);
         BANPostulates.append(p);
+        p=new BanPostulates(BanRuleId::I3,goal,preList2);
+        post.append(p);
         preList.clear();
 
     }
@@ -197,6 +208,8 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("NV",goal,preList);
         BANPostulates.append(p);
+        p=new BanPostulates(BanRuleId::NV,goal,preList2);
+        post.append(p);
         preList.clear();
 
     }
@@ -227,6 +240,9 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("J",goal,preList);
         BANPostulates.append(p);
+        p=new BanPostulates(BanRuleId::J,goal,preList2);
+
+        post.append(p);
         preList.clear();
 
     }
@@ -247,6 +263,8 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre1);
         p=new BanPostulates("S1",goal,preList);
         BANPostulates.append(p);
+        p=new BanPostulates(BanRuleId::S1,goal,preList2);
+        post.append(p);
         preList.clear();
 
     }
@@ -266,6 +284,9 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre1);
         p=new BanPostulates("S2",goal,preList);
         BANPostulates.append(p);
+        p=new BanPostulates(BanRuleId::S2,goal,preList2);
+
+        post.append(p);
         preList.clear();
 
     }
@@ -291,6 +312,9 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("S3",goal,preList);
         BANPostulates.append(p);
+        p=new BanPostulates(BanRuleId::S3,goal,preList2);
+
+        post.append(p);
         preList.clear();
 
     }
@@ -316,6 +340,9 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("S4",goal,preList);
         BANPostulates.append(p);
+        p=new BanPostulates(BanRuleId::S4,goal,preList2);
+
+        post.append(p);
         preList.clear();
     }
 
@@ -340,6 +367,9 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre2);
         p=new BanPostulates("S5",goal,preList);
         BANPostulates.append(p);
+        p=new BanPostulates(BanRuleId::S5,goal,preList2);
+
+        post.append(p);
         preList.clear();
     }
 
@@ -358,6 +388,9 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre1);
         p=new BanPostulates("S6",goal,preList);
         BANPostulates.append(p);
+       // p=new BanPostulates(BanRuleId::S6,goal,preList2);
+
+      //  post.append(p);
         preList.clear();
 
     }
@@ -376,6 +409,9 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre1);
         p=new BanPostulates("S7",goal,preList);
         BANPostulates.append(p);
+        p=new BanPostulates(BanRuleId::S7,goal,preList2);
+
+        post.append(p);
         preList.clear();
 
     }
@@ -399,6 +435,9 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre1);
         p=new BanPostulates("F1",goal,preList);
         BANPostulates.append(p);
+        p=new BanPostulates(BanRuleId::F1,goal,preList2);
+
+        post.append(p);
         preList.clear();
     }
     {
@@ -417,6 +456,9 @@ BANLogic::BANLogicImpl::BANLogicImpl()
         preList.append(pre1);
         p=new BanPostulates("F2",goal,preList);
         BANPostulates.append(p);
+        p=new BanPostulates(BanRuleId::F2,goal,preList2);
+
+        post.append(p);
         preList.clear();
 
 

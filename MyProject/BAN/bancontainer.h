@@ -11,7 +11,9 @@
 
 namespace BANLogic {
 
-typedef LPT::LPTList<BanDComponent*> ComponentPtrList;
+typedef LPT::LPTList<BanDComponent*> ComponentPtrListD;
+typedef LPT::LPTList<BanSComponent*> ComponentPtrListS;
+
 typedef LPT::LPTList<BanDAtom *> AtomPtrList;
 typedef LPT::LPTList<BanDataList *> DataPtrList;
 typedef LPT::LPTList<BanStatementList *> StatementPtrList;

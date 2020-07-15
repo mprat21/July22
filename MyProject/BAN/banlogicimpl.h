@@ -6,6 +6,8 @@
 #include "bandatalist.h"
 #include "banstatementlist.h"
 #include "banpostulates.h"
+#include "bancontainer.h"
+
 #include "../LPT/LPTDefinitions.h"
 #include "../LPT/Logic.h"
 #include "../LPT/Statement.h"
@@ -19,6 +21,8 @@ class BANLogicImpl: public LPT::Logic
 {
 private:
     QList<BanPostulates*> BANPostulates;
+    PostulatePtrList post;
+
 
 public:
     BANLogicImpl();
