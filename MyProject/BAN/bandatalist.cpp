@@ -307,7 +307,7 @@ bool BANLogic::BanDataList::match(BanSComponent &Scomp)
                         }
                     }
                 }
-                else if(mylist2.value(i)->getDtype()!=mylist1.value(i)->getDtype())
+                else if(mylist2.value(juno)->getDtype()!=mylist1.value(i)->getDtype())
                 {
                     if(mylist1.value(i)->getDtype()==BanDComponentType::bAnyData)
                     {

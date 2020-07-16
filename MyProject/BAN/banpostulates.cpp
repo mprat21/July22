@@ -95,42 +95,57 @@ BanPostulates::BanPostulates(BanRuleId ruleid, LPT::Statement *pGoal, LPT::State
     }
     rule.append(") -> (" + goal->getString() + ")");
     //updateAtomicComponents();
+    //cout<<rule.toStdString()<<endl;
 }
 
 BanPostulates::BanPostulates(BanPostulates &orig):rule(orig.rule)
 {
-    temp.clear();
-    BanStatementList *origPre, *newPre;
-    rule=orig.rule;
+  BanStatementList *pr, *go;
+  id=orig.getRuleID();
+  rule=orig.rule;
 
-    // create copy of goal
-    goals = new BanStatementList(*orig.goals);
-    if (goals == NULL) {
-        throw new BanException("Failed to allocate new Data goal in banPostulate Copy Constructor");
-    }
-    // copy all prerequisites
-    foreach(origPre, orig.prereq)
-    {
-        newPre = new BanStatementList(*origPre);
-        if (newPre == NULL) {
-            throw new BanException("Failed to allocate new Data newPre in banPostulate Copy Constructor");
-        }
-        prereq.append(newPre);
-        temp.append(newPre);
-    }
-    allPostulate.append(this);
+  QList<BanSComponent*> goalList=orig.getBanGoal()->getStList();
+  go=new BanStatementList(goalList);
+  goal=go;
+
+  QList<BanStatementList*> preList=orig.getBanPrerequisites(id);
+  for (int i=0; i<preList.count(); ++i) {
+      prerequisites.append(preList.value(i));
+  }
 }
 
 LPT::Postulate *BANLogic::BanPostulates::getCopy()
 {
+    return new BanPostulates(*this);
 }
 
 QString BANLogic::BanPostulates::getString()
 {
+    QString s = QString("(") + BanRuleNames[static_cast<int>(id)] + ":";
+    for (int i=0; i<prerequisites.count(); ++i) {
+        s.append(prerequisites.at(i)->getString());
+        if (i < prerequisites.count()-1) s.append(", ");
+    }
+    s.append(") -> (" + goal->getString() + ")");
+    return s;
 }
 
 bool BANLogic::BanPostulates::operator ==(LPT::Postulate &p2)
 {
-    return true;
+    bool equals = true;
+    BanPostulates *p = dynamic_cast<BanPostulates *>(&p2);
+    if (p != nullptr) {
+        // postulates are equivalent if they have same id and goals are equivalent,
+        // have same number of prerequisites and each prerequisite is equivalet
+        equals = id == p->id
+                && *dynamic_cast<BanSComponent *>(goal) == *dynamic_cast<BanSComponent *>(p->goal)
+                && prerequisites.count() == p->prerequisites.count();
+        for (int i=0; equals && i<prerequisites.count(); ++i) {
+            equals = equals && *dynamic_cast<BanSComponent *>(prerequisites.at(i)) == *dynamic_cast<BanSComponent *>(p->prerequisites.at(i));
+        }
+    } else {
+        equals = false;
+    }
+    return equals;
 }
 }

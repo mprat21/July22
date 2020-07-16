@@ -16,6 +16,9 @@ QStack<QString> BanStatementList::getPrintStStack() const
 
 BanStatementList::BanStatementList(BanStatementList &orig):BanSComponent(BanSComponentType::bStatement)
 {
+  //  stype=orig.stype;
+    //stid=orig.stid;
+   // stList=orig.stList;
     BanSOperator *oper;
     BanDataList *datas;
     switch(orig.stype)
@@ -46,6 +49,11 @@ BanStatementList::BanStatementList(BanStatementList &orig):BanSComponent(BanSCom
 }
 
 
+
+void BanStatementList::setStList(const QList<BanSComponent *> &value)
+{
+    stList = value;
+}
 
 BANLogic::BanStatementList::BanStatementList():BanSComponent(BanSComponentType::bStatement)
 {

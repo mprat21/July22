@@ -41,6 +41,7 @@ public:
     virtual QString getString() override;
     // BanSComponent interface
     virtual bool operator ==(const BanSComponent &other) override;
+    void setStList(const QList<BanSComponent *> &value);
 };
 
 }

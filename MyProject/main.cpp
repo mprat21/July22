@@ -61,14 +61,14 @@ void testBAN() {
     BanDataList *d1 = new BanDataList({da, dn, new BanDOperator(BanDOperatorType::concates)});
     BanStatementList *s1 = new BanStatementList({new BanDataList({b}), d1, new BanSOperator(BanSOperatorType::sees)});
     step.append(s1);
-    QMessageBox::information(nullptr, "Cryptographic-Protocol Development & Verification Tool", s1->getString());
+    //QMessageBox::information(nullptr, "Cryptographic-Protocol Development & Verification Tool", s1->getString());
 
     BanStatementList *g1 = new BanStatementList({new BanDataList({b}), new BanDataList({da}), new BanSOperator(BanSOperatorType::sees)});
 
-    BanStatementList *g2 = new BanStatementList({new BanDataList({b}), new BanDataList({dn}), new BanSOperator(BanSOperatorType::sees)});
+   // BanStatementList *g2 = new BanStatementList({new BanDataList({b}), new BanDataList({dn}), new BanSOperator(BanSOperatorType::sees)});
 
     goals.append(g1);
-    goals.append(g2);
+   // goals.append(g2);
 
     LPT::LayeredProvingTree lpt(LPT::ImplementedLogics::BAN, assum, step, goals);
 
