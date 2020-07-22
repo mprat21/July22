@@ -93,6 +93,13 @@ bool BANLogic::BanDAtom::match(BanDComponent& value)
     else ifMatches=false;
     return ifMatches;
 }
+void BanDAtom::instantiateObject(BanDComponent *value)
+{
+    BanDAtom *a =dynamic_cast<BanDAtom*>(value);
+    this->setId(a->getID());
+    this->inverseKey = a->inverseKey;
+    this->instantiate=a->instantiate;
+}
 
 bool BANLogic::BanDAtom::unify(BanDComponent& value)
 {
@@ -108,30 +115,30 @@ bool BANLogic::BanDAtom::unify(BanDComponent& value)
                 {
                     BanDAtom &a =dynamic_cast<BanDAtom&>(value);
                     std::cout<<this->getID().toStdString()<<" = " <<a.getID().toStdString() <<endl;
-                    this->setId(value.getID());
-                    this->inverseKey = a.inverseKey;
+                   this->instantiateObject(&value);
                     this->unifies=true;
                 }
                 else if(this->getInstantiate()==true && value.getInstantiate()==false)
                 {
                     cout<<endl;
+                    BanDAtom &a =dynamic_cast<BanDAtom&>(value);
 
                     QTextStream(stdout) << value.getID()<<" = "<<this->getID() <<endl;
-                    value.setId(this->getID());
-                    this->unifies=true;
+                    a.instantiateObject(this);
+                    a.unifies=true;
                 }
                 else if(this->getInstantiate()==false && value.getInstantiate()==false)
                 {
                     cout<<endl;
 
                     QTextStream(stdout) << this->getID()<<" = "<<value.getID() <<endl;
-                    this->setId(value.getID());
+                    this->instantiateObject(&value);
                     this->unifies=true;
                 }
             }
             else if(this->getID()==value.getID())
             {
-                this->setId(value.getID());
+               this->instantiateObject(&value);
                 this->unifies=true;
             }
             break;
@@ -285,9 +292,7 @@ BANLogic::BanDAtom::BanDAtom(BanDAtom &orig):BanDComponent(BanDComponentType::bA
 
 QString BANLogic::BanDAtom::getString()
 {
-    QString s="";
-    s.append( this->aValue);
-    return s;
+    return this->aValue;
 }
 
 bool BANLogic::BanDAtom::operator ==(const BanDComponent &other)
@@ -305,3 +310,4 @@ bool BANLogic::BanDAtom::operator ==(const BanDComponent &other)
     else if(other.getDtype()==BanDComponentType::bAnyData && instantiate==false) equals=true;
     return equals;
 }
+

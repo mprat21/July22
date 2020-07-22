@@ -38,6 +38,8 @@ public:
 public:
     virtual QString getString() override;
     virtual bool operator ==(const BanDComponent &other) override;
+    virtual void instantiateObject(BanDComponent *other);
+
 };
 }
 #endif // BANDATAC_H

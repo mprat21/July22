@@ -16,7 +16,7 @@ BANLogic::BanDataC::BanDataC():BanDComponent(BanDComponentType::bAnyData)
         this->type=BanDComponentType::bAnyData;
         this->instantiate=false;
         myListdata.append(this);
-        //printQStack.push(this->getID());
+        printQStack.push(this->getID());
     }
 }
 
@@ -157,93 +157,133 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent &val)
     // this->dataValue=printQStack.top();
     return ifMatches;
 }
+void BanDataC::instantiateObject(BanDComponent *value)
+{
+    for(int i=0; i<myListdata.count(); i++)
+    {
+    if(myListdata.at(i)->getDtype()==BanDComponentType::bAnyData)
+    {
+        this->myListdata.pop_front();
+        this->printQStack.pop();
+        switch (value->getDtype()) {
+        case BanDComponentType::bAtom:
+        {
+            BanDAtom *atm= dynamic_cast<BanDAtom*>(value);
+            this->myListdata.append(atm);
+            this->printQStack.push(atm->getID());
+            break;
+        }
+        case BanDComponentType::bOperator:
+        {
+            BanDOperator *op= dynamic_cast<BanDOperator*>(value);
+            switch (op->getDOtype())
+            {
+            case BanDOperatorType::concates:{
+                this->printQStack.push(this->printQStack.pop()+","+this->printQStack.pop());
+                this->myListdata.append(op);
+                break;
+            }
+            case BanDOperatorType::Encryption:{
+                this->printQStack.push("{"+this->printQStack.pop()+"}"+this->printQStack.pop());
+                this->myListdata.append(op);
 
+                break;
+            }
+            case BanDOperatorType::FreshData:{
+                this->printQStack.push(this->printQStack.pop()+op->getID()+this->printQStack.pop());
+                this->myListdata.append(op);
+                break;
+            }
+            case BanDOperatorType::ShareKey:{
+                this-> printQStack.push(this->printQStack.pop()+op->getID()+this->printQStack.pop());
+                this->myListdata.append(op);
+                break;
+            }
+            case BanDOperatorType::ShareSecret:{
+                this-> printQStack.push(this->printQStack.pop()+op->getID()+this->printQStack.pop());
+                break;
+            }
+            case BanDOperatorType::HasKey:{
+                this-> printQStack.push(this->printQStack.pop()+op->getID()+this->printQStack.pop());
+                this->myListdata.append(op);
+                break;
+            }
+            default:
+            {
+                throw new BanException("Unrecognised Component Type in banDataC::unify()");
+            }
+            }
+            break;
+        }
+        case BanDComponentType::bAnyData:
+        {
+            //BanDataC *atm= new BanDataC();
+            BanDataC *dc= dynamic_cast<BanDataC*>(value);
+            //this->myListdata.append(dc);
+           //this->printQStack.push(dc->getID());
+            break;
+        }
+
+    }
+    }
+
+    }
+
+}
 bool BANLogic::BanDataC::unify(BANLogic::BanDComponent &value)
 {
     if(this->match(value))
     {
-        if(value.getDtype()==BanDComponentType::bAtom)
+        switch(value.getDtype())
+        {
+        case BanDComponentType::bAtom:
         {
             BanDAtom &comp2=dynamic_cast<BanDAtom&>(value);
             if(comp2.getInstantiate()==true)
             {
-                if(myListdata.at(0)->getDtype()==BanDComponentType::bAnyData)
-                    this->myListdata.pop_back();
-                BanDAtom *atm= new BanDAtom(comp2.getAtype(),comp2.getID());
-                this->myListdata.append(atm);
-                this->printQStack.push(atm->getID());
+                instantiateObject(&comp2);
                 unifies=true;
             }
             else unifies=false;
+         break;
         }
-        else if(value.getDtype()==BanDComponentType::bOperator)
+        case BanDComponentType::bOperator:
         {
             BanDOperator &comp2=dynamic_cast<BanDOperator&>(value);
             if(comp2.getInstantiate()==true)
             {
-                //                BanDOperator *op= new BanDOperator(comp2->getDOtype());
-                //                switch (op->getDOtype())
-                //                {
-                //                case BanDOperatorType::concates:{
-                //                    this->printQStack.push(this->printQStack.pop()+","+this->printQStack.pop());
-                //                    this->myListdata.append(op);
-                //                    break;
-                //                }
-                //                case BanDOperatorType::Encryption:{
-                //                    this->printQStack.push("{"+this->printQStack.pop()+"}"+this->printQStack.pop());
-                //                    this->myListdata.append(op);
-
-                //                    break;
-                //                }
-                //                case BanDOperatorType::FreshData:{
-                //                    this->printQStack.push(this->printQStack.pop()+value->getID()+this->printQStack.pop());
-                //                    this->myListdata.append(op);
-                //                    break;
-                //                }
-                //                case BanDOperatorType::ShareKey:{
-                //                    this-> printQStack.push(this->printQStack.pop()+value->getID()+this->printQStack.pop());
-                //                    this->myListdata.append(op);
-                //                    break;
-                //                }
-                //                case BanDOperatorType::ShareSecret:{
-                //                    this-> printQStack.push(this->printQStack.pop()+value->getID()+this->printQStack.pop());
-                //                    break;
-                //                }
-                //                case BanDOperatorType::HasKey:{
-                //                    this-> printQStack.push(this->printQStack.pop()+value->getID()+this->printQStack.pop());
-                //                    this->myListdata.append(op);
-                //                    break;
-                //                }
-                //                default:
-                //                {
-                //                    throw new BanException("Unrecognised Component Type in banDataC::unify()");
-                //                }
-                //                }
+                instantiateObject(&comp2);
                 unifies=false;
             }
+            break;
+
         }
-        else if(value.getDtype()==BanDComponentType::bAnyData)
+        case BanDComponentType::bAnyData:
         {
             // QTextStream(stdout) <<this->getID()+ " " <<flush;
 
             BanDataC &comp2=dynamic_cast<BanDataC&>(*this);
             if(comp2.getInstantiate()==true)
             {
-                BanDataC *atm= new BanDataC();
-                //this->getMyListdata().append(value);
+                //instantiateObject(&comp2);
                 unifies=true;
             }
             else
                 unifies=false;
-            //this->getMyListdata().append(value);
+            break;
 
         }
+
+        }
+
     }
     if(unifies)
     {
         if(value.getDtype()!=BanDComponentType::bOperator)
             QTextStream(stdout) <<value.getID()+ " " <<flush;
+        //this->setId(this->printQStack.top());
 
+        this->instantiate=false;
     }
     return unifies;
 }
@@ -293,33 +333,41 @@ void BANLogic::BanDataC::printRPN()
 QString BANLogic::BanDataC::getString()
 {
     QString s = "";
-    foreach(BanDComponent *ptr,this->myListdata)
+    foreach(QString ptr,this->printQStack)
     {
-        switch(ptr->getDtype())
-        {
-        case BanDComponentType::bAtom:
-        {
-            BanDAtom *d1=dynamic_cast<BanDAtom *>(ptr);
-           // s.append(QString("(") + d1->getString()+ ")");
-            break;
-        }
-        case BanDComponentType::bOperator:
-        {
-            BanDOperator *d1=dynamic_cast<BanDOperator *>(ptr);
-           // s.append(QString("(") + d1->getString()+ ")");
-            break;
-        }
-        case BanDComponentType::bAnyData:
-        {
-           s.append(QString("(") +ptr->getID()+ ")");
-            break;
-        }
-        default:
-        {
-            throw new BanException("Unrecognised Component Type in banDataC::getString()");
-        }
-        }
+        s.append(ptr);
     }
+    //this->setId(s);
+
+//        foreach(BanDComponent *ptr,this->myListdata)
+//        {
+//            switch(ptr->getDtype())
+//            {
+//            case BanDComponentType::bAtom:
+//            {
+//                BanDAtom *d1=dynamic_cast<BanDAtom *>(ptr);
+//                s.append((d1->getID()));
+//                break;
+//            }
+//            case BanDComponentType::bOperator:
+//            {
+//                BanDOperator *d1=dynamic_cast<BanDOperator *>(ptr);
+//               s.append(d1->getID());
+//                break;
+//            }
+//            case BanDComponentType::bAnyData:
+//            {
+//               s.append(ptr->getID());
+//                //ptr->getString();
+//                break;
+//            }
+//            default:
+//            {
+//                throw new BanException("Unrecognised Component Type in banDataC::getString()");
+//            }
+//            }
+//        }
+
     return s;
 }
 
@@ -399,4 +447,6 @@ bool BANLogic::BanDataC::operator ==(const BANLogic::BanDComponent &other)
     }
     return equals;
 }
+
+
 }

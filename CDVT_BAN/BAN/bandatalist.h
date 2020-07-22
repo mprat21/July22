@@ -41,6 +41,7 @@ public:
     virtual bool operator ==(const BanSComponent &other) override;
 
     BanDataList* getCopy(LPT::LPTPtrList<BanDComponent> &components);
+    void instantiateObject(BanSComponent *Scomp);
 
 };
 }

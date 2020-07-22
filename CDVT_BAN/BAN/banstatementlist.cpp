@@ -30,52 +30,52 @@ BanStatementList *BanStatementList::getCopy(LPT::LPTPtrList<BanDComponent> &comp
                 copy->stList.append(data1->getCopy(components));
                 //data2=new BanDataList();
 
-//                if(i==0)
-//                {
-//                    Prin= dynamic_cast<BanDAtom *>(dynamic_cast<BanDataList *>(this->stList.value(0))->getDataList().value(0));
-//                    for (int j=0; j<components.count(); ++j) {
-//                        c = components.at(j);
-//                        if (c->getDtype() == BanDComponentType::bAtom) {
-//                            a = dynamic_cast<BanDAtom *>(c);
-//                            if (*a == *Prin) {
-//                                // found component, set it in copy
-//                                data2=new BanDataList({a});
-//                                copy->stList.append(data2);
-//                               // copy->printStStack.push(data2->getString());
-//                                break;
-//                            }
-//                        }
-//                    }
-//                }
-//                else
-//                {
-//                    for(int k=0; k<data1->getDataList().size(); k++)
-//                    {
-//                        for (int j=0; j<components.count(); ++j) {
-//                            c = components.at(j);
-//                            if ( (c->getDtype() == BanDComponentType::bAnyData || c->getDtype() == BanDComponentType::bAtom) && *c==*data1->getDataList().at(k) )
-//                            {
-//                                copy->stList.append(data1);
-//                                break;
-//                            }
-//                        }
-//                       // copy->printStStack.push(data1->getString());
-//                    }
-//                }
+                //                if(i==0)
+                //                {
+                //                    Prin= dynamic_cast<BanDAtom *>(dynamic_cast<BanDataList *>(this->stList.value(0))->getDataList().value(0));
+                //                    for (int j=0; j<components.count(); ++j) {
+                //                        c = components.at(j);
+                //                        if (c->getDtype() == BanDComponentType::bAtom) {
+                //                            a = dynamic_cast<BanDAtom *>(c);
+                //                            if (*a == *Prin) {
+                //                                // found component, set it in copy
+                //                                data2=new BanDataList({a});
+                //                                copy->stList.append(data2);
+                //                               // copy->printStStack.push(data2->getString());
+                //                                break;
+                //                            }
+                //                        }
+                //                    }
+                //                }
+                //                else
+                //                {
+                //                    for(int k=0; k<data1->getDataList().size(); k++)
+                //                    {
+                //                        for (int j=0; j<components.count(); ++j) {
+                //                            c = components.at(j);
+                //                            if ( (c->getDtype() == BanDComponentType::bAnyData || c->getDtype() == BanDComponentType::bAtom) && *c==*data1->getDataList().at(k) )
+                //                            {
+                //                                copy->stList.append(data1);
+                //                                break;
+                //                            }
+                //                        }
+                //                       // copy->printStStack.push(data1->getString());
+                //                    }
+                //                }
                 break;
             }
             case BanSComponentType::bSOperator:
             {
                 op2=dynamic_cast<BanSOperator*>(stList.value(i));
                 copy->stList.append(op2);
-               // copy->printStStack.push(op2->getString());
+                // copy->printStStack.push(op2->getString());
                 break;
             }
             case BanSComponentType::bStatement:
             {
                 Sc=  dynamic_cast<BanStatementList *>(stList.value(i));
                 copy->stList.append(Sc->getCopy(components));
-               // copy->printStStack.push(Sc->getString());
+                // copy->printStStack.push(Sc->getString());
                 break;
             }
             }
@@ -366,6 +366,8 @@ bool BANLogic::BanStatementList::unify(BanSComponent &Scomp)
                             QTextStream(stdout) <<this->stList.value(i)->getID()+ " " <<flush;
                             unifies=true;
                             this->stList.replace(i,data.stList.value(i));
+                            this->printStStack.push(data.stList.value(i)->getID());
+
                             //this->stList.value(i)->setId(d2->getID());
                             temp.append(data.stList.value(i));
 
@@ -383,6 +385,8 @@ bool BANLogic::BanStatementList::unify(BanSComponent &Scomp)
                         if(this->stList.value(i)->unify(*data.stList.value(i)))
                         {
                             unifies=true;
+                            this->stList.replace(i,data.stList.value(i));
+                            this->printStStack.push(data.stList.value(i)->getID());
                             mycount++;
                         }
                         else
@@ -407,6 +411,8 @@ bool BANLogic::BanStatementList::unify(BanSComponent &Scomp)
                             {
                                 if(s1->unify(*s2))
                                 {
+                                    s1->stList.append(data.stList.value(i));
+                                    s1->printStStack.push(data.stList.value(i)->getID());
                                     unifies=true;
                                     mycount++;
                                 }
@@ -439,8 +445,8 @@ bool BANLogic::BanStatementList::unify(BanSComponent &Scomp)
     }
     if(unifies==true)
     {
-        BanStatementList *final=new BanStatementList(this->stList);
-        this->printStStack=final->printStStack;
+        //BanStatementList *final=new BanStatementList(this->stList);
+        //this->printStStack=final->printStStack;
     }
     return unifies;
 }
@@ -458,11 +464,11 @@ void BANLogic::BanStatementList::print()
 {
     std::cout << getString().toStdString() << std::endl;
 
-//    BanStatementList *tp=new BanStatementList(this->stList);
-//    foreach(QString ptr, this->printStStack)
-//    {
-//        QTextStream(stdout)<<ptr;
-//    }
+    //    BanStatementList *tp=new BanStatementList(this->stList);
+    //    foreach(QString ptr, this->printStStack)
+    //    {
+    //        QTextStream(stdout)<<ptr;
+    //    }
 }
 
 void BANLogic::BanStatementList::setId(const QString &value)
@@ -487,14 +493,35 @@ QString BANLogic::BanStatementList::getString()
 {
     QString s="";
     BanStatementList *d=new BanStatementList(stList);
-    foreach(QString str,printStStack)
-    {
-        s.append(str);
-    }
-//    for (int i=0; i<stList.count(); ++i) {
-//        s.append(stList.at(i)->getString());
-//        if (i < stList.count()-1) s.append(", ");
+    s.append(d->printStStack.pop());
+
+
+//    foreach(BanSComponent *ptr,this->stList)
+//    {
+//        switch(ptr->getStype())
+//        {
+//        case BanSComponentType::bData:
+//        {
+//            BanDataList *d1=dynamic_cast<BanDataList *>(ptr);
+//            s.append(d1->getString());
+//            break;
+//        }
+//        case BanSComponentType::bSOperator:
+//        {
+//            BanSOperator *d1=dynamic_cast<BanSOperator *>(ptr);
+//            s.append(d1->getID());
+//            break;
+//        }
+//        case BanSComponentType::bStatement:
+//        {
+//            BanStatementList *d1=dynamic_cast<BanStatementList *>(ptr);
+//            s.append(d1->getString());
+//            break;
+//        }
+//        }
+//        //QTextStream(stdout)<<ptr->getID();
 //    }
+
     return s;
 }
 
