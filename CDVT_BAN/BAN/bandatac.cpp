@@ -333,40 +333,40 @@ void BANLogic::BanDataC::printRPN()
 QString BANLogic::BanDataC::getString()
 {
     QString s = "";
-    foreach(QString ptr,this->printQStack)
-    {
-        s.append(ptr);
-    }
+//    foreach(QString ptr,this->printQStack)
+//    {
+//        s.append(ptr);
+//    }
     //this->setId(s);
 
-//        foreach(BanDComponent *ptr,this->myListdata)
-//        {
-//            switch(ptr->getDtype())
-//            {
-//            case BanDComponentType::bAtom:
-//            {
-//                BanDAtom *d1=dynamic_cast<BanDAtom *>(ptr);
-//                s.append((d1->getID()));
-//                break;
-//            }
-//            case BanDComponentType::bOperator:
-//            {
-//                BanDOperator *d1=dynamic_cast<BanDOperator *>(ptr);
-//               s.append(d1->getID());
-//                break;
-//            }
-//            case BanDComponentType::bAnyData:
-//            {
-//               s.append(ptr->getID());
-//                //ptr->getString();
-//                break;
-//            }
-//            default:
-//            {
-//                throw new BanException("Unrecognised Component Type in banDataC::getString()");
-//            }
-//            }
-//        }
+        foreach(BanDComponent *ptr,this->myListdata)
+        {
+            switch(ptr->getDtype())
+            {
+            case BanDComponentType::bAtom:
+            {
+                BanDAtom *d1=dynamic_cast<BanDAtom *>(ptr);
+                s.append((d1->getID()));
+                break;
+            }
+            case BanDComponentType::bOperator:
+            {
+                BanDOperator *d1=dynamic_cast<BanDOperator *>(ptr);
+               s.append(d1->getID());
+                break;
+            }
+            case BanDComponentType::bAnyData:
+            {
+               s.append(ptr->getID());
+                //ptr->getString();
+                break;
+            }
+            default:
+            {
+                throw new BanException("Unrecognised Component Type in banDataC::getString()");
+            }
+            }
+        }
 
     return s;
 }
