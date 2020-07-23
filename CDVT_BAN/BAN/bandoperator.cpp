@@ -189,7 +189,7 @@ BANLogic::BanDOperator::BanDOperator(BanDOperatorType adTy):BanDComponent(BanDCo
 
 QString BANLogic::BanDOperator::getString()
 {  
-   return this->oValue;
+   return oValue;
 }
 
 bool BANLogic::BanDOperator::operator ==(const BanDComponent &other)

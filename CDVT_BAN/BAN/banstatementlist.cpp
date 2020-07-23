@@ -168,9 +168,10 @@ BANLogic::BanStatementList::BanStatementList(QList<BanSComponent *> sList):BanSC
         case BanSComponentType::bData:
         {
             BanDataList *comp1=dynamic_cast<BanDataList *>(ptr);
-            foreach(QString ptr, comp1->getPrintStack())
+            foreach(QString str, comp1->getPrintStack())
             {
-                this->printStStack.push(ptr);
+                this->printStStack.push(str);
+
             }
             break;
         }
@@ -281,6 +282,7 @@ bool BANLogic::BanStatementList::match(BanSComponent &Scomp)
                     else
                     {
                         ifMatches=false;
+                        break;
                     }
                     break;
                 }
@@ -295,6 +297,7 @@ bool BANLogic::BanStatementList::match(BanSComponent &Scomp)
                     else
                     {
                         ifMatches=false;
+                        break;
                     }
                     break;
                 }
@@ -338,115 +341,87 @@ bool BANLogic::BanStatementList::match(BanSComponent &Scomp)
 }
 
 bool BANLogic::BanStatementList::unify(BanSComponent &Scomp)
-{
-    unifies=false;
-
-    QList<BanDComponent*> temp1;
-    QList<BanSComponent*> temp;
-    int mycount=0;
-
+{   
     if(this->match(Scomp))
     {
-        switch(Scomp.getStype())
+
+        BanStatementList &st=dynamic_cast<BanStatementList&>(Scomp);
+        unifies=false;
+        if(this->printStStack.count()>0)
+            this->printStStack.clear();
+        for(int i=0; i<stList.count(); i++)
         {
-        case BanSComponentType::bStatement:
-        {
-            BanStatementList data=dynamic_cast<BanStatementList&>(Scomp);
-            if(this->stList.size()==data.stList.size())
+            switch(this->stList.at(i)->getStype())
             {
-                for(int i=0; i<this->stList.size(); i++)
+            case BanSComponentType::bData:
+            {
+                if(st.stList.at(i)->getStype()==stList.at(i)->getStype())
                 {
-                    switch(this->stList.value(i)->getStype())
+                    BanDataList &data1=dynamic_cast<BanDataList&>(*stList.at(i));
+                    BanDataList &data2=dynamic_cast<BanDataList&>(*st.stList.at(i));
+                    if(data1.unify(data2))
                     {
-                    case BanSComponentType::bData:
-                    {
-
-                        if(this->stList.value(i)->unify(*data.stList.value(i)))
-                        {
-                            QTextStream(stdout) <<this->stList.value(i)->getID()+ " " <<flush;
-                            unifies=true;
-                            this->stList.replace(i,data.stList.value(i));
-                            this->printStStack.push(data.stList.value(i)->getID());
-
-                            //this->stList.value(i)->setId(d2->getID());
-                            temp.append(data.stList.value(i));
-
-                            mycount++;
-                        }
-                        else
-                        {
-                            unifies=false;
-                            break;
-                        }
-                        break;
+                        this->printStStack.push(this->stList.at(i)->getID());
+                        // data1.instantiateObject(&data2);
+                        unifies=true;
                     }
-                    case BanSComponentType::bSOperator:
+                    else
                     {
-                        if(this->stList.value(i)->unify(*data.stList.value(i)))
-                        {
-                            unifies=true;
-                            this->stList.replace(i,data.stList.value(i));
-                            this->printStStack.push(data.stList.value(i)->getID());
-                            mycount++;
-                        }
-                        else
-                        {
-                            unifies=false;
-                            break;
-                        }
+                        unifies=false;
                         break;
-                    }
-                    case BanSComponentType::bStatement:
-                    {
-                        BanStatementList *s1=dynamic_cast<BanStatementList*>(this->stList.value(i));
-                        BanStatementList *s2=dynamic_cast<BanStatementList*>(data.stList.value(i));
-                        {
-                            if(s1->stList.isEmpty())
-                            {
-                                s1->stList.append(data.stList.value(i));
-                                s1->printStStack=s2->printStStack;
-                                unifies=true;
-                            }
-                            else
-                            {
-                                if(s1->unify(*s2))
-                                {
-                                    s1->stList.append(data.stList.value(i));
-                                    s1->printStStack.push(data.stList.value(i)->getID());
-                                    unifies=true;
-                                    mycount++;
-                                }
-                                else
-                                {
-                                    unifies=false;
-                                    break;
-                                }
-                            }
-                            //unifies=true;
-                            mycount++;
-                        }
-
-                        break;
-                    }
                     }
                 }
+                else
+                {
+                    unifies=false;
+                    break;
+                }
+                break;
             }
-            break;
-        }
-        case BanSComponentType::bData:{
-            unifies=false;
-            break;
-        }
-        case BanSComponentType::bSOperator:{
-            unifies=false;
-            break;
-        }
+            case BanSComponentType::bSOperator:
+            {
+                if(st.stList.at(i)->getStype()==stList.at(i)->getStype())
+                {
+                    if(this->stList.value(i)->unify(*st.stList.value(i)))
+                    {
+                        this->printStStack.push(this->stList.at(i)->getID());
+                        unifies=true;
+
+                    }
+                    else
+                    {
+                        unifies=false;
+                        break;
+                    }
+                }
+                else
+                {
+                    unifies=false;
+                    break;
+                }
+                break;
+            }
+            case BanSComponentType::bStatement:
+            {
+                BanStatementList &s1=dynamic_cast<BanStatementList&>(*this->stList.value(i));
+                BanStatementList &s2=dynamic_cast<BanStatementList&>(*st.stList.value(i));
+                if(s1.unify(s2))
+                {
+                    //s1.stList.append(&s2);
+                    // s1.printStStack.push(s2.getID());
+                    unifies=true;
+                }
+                unifies=false;
+                break;
+            }
+            }
         }
     }
-    if(unifies==true)
+    else unifies=false;
+    if(unifies)
     {
-        //BanStatementList *final=new BanStatementList(this->stList);
-        //this->printStStack=final->printStStack;
+        BanStatementList *st=new BanStatementList(stList);
+        this->printStStack=st->printStStack;
     }
     return unifies;
 }
@@ -491,36 +466,45 @@ bool BANLogic::BanStatementList::operator ==(const LPT::Statement &stmt)
 
 QString BANLogic::BanStatementList::getString()
 {
-    QString s="";
-    BanStatementList *d=new BanStatementList(stList);
-    s.append(d->printStStack.pop());
-
-
-//    foreach(BanSComponent *ptr,this->stList)
+    QString s=" ";
+//    BanStatementList *d=new BanStatementList(stList);
+//    foreach(QString ptr, d->getPrintStStack())
 //    {
-//        switch(ptr->getStype())
-//        {
-//        case BanSComponentType::bData:
-//        {
-//            BanDataList *d1=dynamic_cast<BanDataList *>(ptr);
-//            s.append(d1->getString());
-//            break;
-//        }
-//        case BanSComponentType::bSOperator:
-//        {
-//            BanSOperator *d1=dynamic_cast<BanSOperator *>(ptr);
-//            s.append(d1->getID());
-//            break;
-//        }
-//        case BanSComponentType::bStatement:
-//        {
-//            BanStatementList *d1=dynamic_cast<BanStatementList *>(ptr);
-//            s.append(d1->getString());
-//            break;
-//        }
-//        }
-//        //QTextStream(stdout)<<ptr->getID();
+//        s.append(ptr);
 //    }
+
+    //s.append(d->printStStack.pop());
+
+
+    foreach(BanSComponent *ptr,this->stList)
+    {
+        switch(ptr->getStype())
+        {
+        case BanSComponentType::bData:
+        {
+            BanDataList *d1=dynamic_cast<BanDataList *>(ptr);
+            s.append(d1->getString());
+//            foreach(BanDComponent *so, d1->getDataList())
+//            {
+//                s.append(so->getString());
+//            }
+            break;
+        }
+        case BanSComponentType::bSOperator:
+        {
+            BanSOperator *d1=dynamic_cast<BanSOperator *>(ptr);
+            s.append(d1->getString());
+            break;
+        }
+        case BanSComponentType::bStatement:
+        {
+            BanStatementList *d1=dynamic_cast<BanStatementList *>(ptr);
+            s.append(d1->getString());
+            break;
+        }
+
+        }
+    }
 
     return s;
 }

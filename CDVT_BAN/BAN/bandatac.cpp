@@ -159,74 +159,65 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent &val)
 }
 void BanDataC::instantiateObject(BanDComponent *value)
 {
-    for(int i=0; i<myListdata.count(); i++)
+    switch (value->getDtype()) {
+    case BanDComponentType::bAtom:
     {
-    if(myListdata.at(i)->getDtype()==BanDComponentType::bAnyData)
+        BanDAtom *atm= dynamic_cast<BanDAtom*>(value);
+        this->myListdata.append(atm);
+        this->printQStack.push(atm->getID());
+        break;
+    }
+    case BanDComponentType::bOperator:
     {
-        this->myListdata.pop_front();
-        this->printQStack.pop();
-        switch (value->getDtype()) {
-        case BanDComponentType::bAtom:
+        BanDOperator *op= dynamic_cast<BanDOperator*>(value);
+        switch (op->getDOtype())
         {
-            BanDAtom *atm= dynamic_cast<BanDAtom*>(value);
-            this->myListdata.append(atm);
-            this->printQStack.push(atm->getID());
+        case BanDOperatorType::concates:{
+            this->printQStack.push(this->printQStack.pop()+","+this->printQStack.pop());
+            this->myListdata.append(op);
             break;
         }
-        case BanDComponentType::bOperator:
-        {
-            BanDOperator *op= dynamic_cast<BanDOperator*>(value);
-            switch (op->getDOtype())
-            {
-            case BanDOperatorType::concates:{
-                this->printQStack.push(this->printQStack.pop()+","+this->printQStack.pop());
-                this->myListdata.append(op);
-                break;
-            }
-            case BanDOperatorType::Encryption:{
-                this->printQStack.push("{"+this->printQStack.pop()+"}"+this->printQStack.pop());
-                this->myListdata.append(op);
+        case BanDOperatorType::Encryption:{
+            this->printQStack.push("{"+this->printQStack.pop()+"}"+this->printQStack.pop());
+            this->myListdata.append(op);
 
-                break;
-            }
-            case BanDOperatorType::FreshData:{
-                this->printQStack.push(this->printQStack.pop()+op->getID()+this->printQStack.pop());
-                this->myListdata.append(op);
-                break;
-            }
-            case BanDOperatorType::ShareKey:{
-                this-> printQStack.push(this->printQStack.pop()+op->getID()+this->printQStack.pop());
-                this->myListdata.append(op);
-                break;
-            }
-            case BanDOperatorType::ShareSecret:{
-                this-> printQStack.push(this->printQStack.pop()+op->getID()+this->printQStack.pop());
-                break;
-            }
-            case BanDOperatorType::HasKey:{
-                this-> printQStack.push(this->printQStack.pop()+op->getID()+this->printQStack.pop());
-                this->myListdata.append(op);
-                break;
-            }
-            default:
-            {
-                throw new BanException("Unrecognised Component Type in banDataC::unify()");
-            }
-            }
             break;
         }
-        case BanDComponentType::bAnyData:
+        case BanDOperatorType::FreshData:{
+            this->printQStack.push(this->printQStack.pop()+op->getID()+this->printQStack.pop());
+            this->myListdata.append(op);
+            break;
+        }
+        case BanDOperatorType::ShareKey:{
+            this-> printQStack.push(this->printQStack.pop()+op->getID()+this->printQStack.pop());
+            this->myListdata.append(op);
+            break;
+        }
+        case BanDOperatorType::ShareSecret:{
+            this-> printQStack.push(this->printQStack.pop()+op->getID()+this->printQStack.pop());
+            this->myListdata.append(op);
+            break;
+        }
+        case BanDOperatorType::HasKey:{
+            this-> printQStack.push(this->printQStack.pop()+op->getID()+this->printQStack.pop());
+            this->myListdata.append(op);
+            break;
+        }
+        default:
         {
-            //BanDataC *atm= new BanDataC();
-            BanDataC *dc= dynamic_cast<BanDataC*>(value);
-            //this->myListdata.append(dc);
-           //this->printQStack.push(dc->getID());
-            break;
+            throw new BanException("Unrecognised Component Type in banDataC::unify()");
         }
-
+        }
+        break;
     }
+    case BanDComponentType::bAnyData:
+    {
+        //BanDataC *atm= new BanDataC();
+        BanDataC *dc= dynamic_cast<BanDataC*>(value);
+        //this->myListdata.append(dc);
+        //this->printQStack.push(dc->getID());
+        break;
     }
-
     }
 
 }
@@ -241,18 +232,17 @@ bool BANLogic::BanDataC::unify(BANLogic::BanDComponent &value)
             BanDAtom &comp2=dynamic_cast<BanDAtom&>(value);
             if(comp2.getInstantiate()==true)
             {
-                instantiateObject(&comp2);
+                this->setId(comp2.getID());
                 unifies=true;
             }
             else unifies=false;
-         break;
+            break;
         }
         case BanDComponentType::bOperator:
         {
             BanDOperator &comp2=dynamic_cast<BanDOperator&>(value);
             if(comp2.getInstantiate()==true)
             {
-                instantiateObject(&comp2);
                 unifies=false;
             }
             break;
@@ -262,10 +252,10 @@ bool BANLogic::BanDataC::unify(BANLogic::BanDComponent &value)
         {
             // QTextStream(stdout) <<this->getID()+ " " <<flush;
 
-            BanDataC &comp2=dynamic_cast<BanDataC&>(*this);
+            BanDataC &comp2=dynamic_cast<BanDataC&>(value);
             if(comp2.getInstantiate()==true)
             {
-                //instantiateObject(&comp2);
+                this->setId(comp2.getID());
                 unifies=true;
             }
             else
@@ -275,7 +265,6 @@ bool BANLogic::BanDataC::unify(BANLogic::BanDComponent &value)
         }
 
         }
-
     }
     if(unifies)
     {
@@ -283,7 +272,7 @@ bool BANLogic::BanDataC::unify(BANLogic::BanDComponent &value)
             QTextStream(stdout) <<value.getID()+ " " <<flush;
         //this->setId(this->printQStack.top());
 
-        this->instantiate=false;
+        // this->instantiate=false;
     }
     return unifies;
 }
@@ -333,40 +322,40 @@ void BANLogic::BanDataC::printRPN()
 QString BANLogic::BanDataC::getString()
 {
     QString s = "";
-//    foreach(QString ptr,this->printQStack)
-//    {
-//        s.append(ptr);
-//    }
-    //this->setId(s);
+//        foreach(QString ptr,this->printQStack)
+//        {
+//            s.append(ptr);
+//        }
+  // this->setId(s);
 
-        foreach(BanDComponent *ptr,this->myListdata)
+    foreach(BanDComponent *ptr,this->myListdata)
+    {
+        switch(ptr->getDtype())
         {
-            switch(ptr->getDtype())
-            {
-            case BanDComponentType::bAtom:
-            {
-                BanDAtom *d1=dynamic_cast<BanDAtom *>(ptr);
-                s.append((d1->getID()));
-                break;
-            }
-            case BanDComponentType::bOperator:
-            {
-                BanDOperator *d1=dynamic_cast<BanDOperator *>(ptr);
-               s.append(d1->getID());
-                break;
-            }
-            case BanDComponentType::bAnyData:
-            {
-               s.append(ptr->getID());
-                //ptr->getString();
-                break;
-            }
-            default:
-            {
-                throw new BanException("Unrecognised Component Type in banDataC::getString()");
-            }
-            }
+        case BanDComponentType::bAtom:
+        {
+            BanDAtom *d1=dynamic_cast<BanDAtom *>(ptr);
+            s.append((d1->getString()));
+            break;
         }
+        case BanDComponentType::bOperator:
+        {
+            BanDOperator *d1=dynamic_cast<BanDOperator *>(ptr);
+            s.append(d1->getString());
+            break;
+        }
+        case BanDComponentType::bAnyData:
+        {
+            s.append(ptr->getID());
+            //ptr->getString();
+            break;
+        }
+        default:
+        {
+            throw new BanException("Unrecognised Component Type in banDataC::getString()");
+        }
+        }
+    }
 
     return s;
 }

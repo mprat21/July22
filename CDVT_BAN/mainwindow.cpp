@@ -265,16 +265,16 @@ LPT::LayeredProvingTree *testVerify(QTextBrowser *comment) {
     step.append(s2);
     step.append(s3);
     step.append(s4);
-    step.append(dummy2);
+    //step.append(dummy2);
 
-    goals.append(g1);
-     goals.append(dummy2);
-    //  goals.append(dummy3);
-    goals.append(dummy5);
+   goals.append(g1);
+    goals.append(dummy2);
+   goals.append(dummy4);
+   goals.append(dummy5);
 
-    // goals.append(g2);
-     // goals.append(g3);
-    //  goals.append(g4);
+   //  goals.append(g2);
+   //  goals.append(g3);
+   //   goals.append(g4);
 
     //        BanDAtom *a = new BanDAtom(banAtomtype::Principal, "A");
     //        BanDAtom *b = new BanDAtom(banAtomtype::Principal, "B");

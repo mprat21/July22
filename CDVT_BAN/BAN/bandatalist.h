@@ -15,6 +15,7 @@ class BanDataList : public BanSComponent
 protected:
    static int datacount;
     QString dataID;
+    QList<BanDComponent*> afterUnificationList;
     QList<BanDComponent*> dataList;
     QStack<QString> printStack;
 
@@ -43,6 +44,9 @@ public:
     BanDataList* getCopy(LPT::LPTPtrList<BanDComponent> &components);
     void instantiateObject(BanSComponent *Scomp);
 
+    QList<BanDComponent *> getAfterUnificationList() const;
+    void setAfterUnificationList(const QList<BanDComponent *> &value);
+    bool findAnyData(QStack<BanDComponent*> anyD, QStack<BanDOperator*> op, QList<BanDComponent*> &anyData, int index);
 };
 }
 #endif // BANDATALIST_H

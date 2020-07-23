@@ -50,8 +50,8 @@ bool BANLogic::BANLogicImpl::getAllInstantiatedPostulates(LPT::Postulate *p, LPT
             instPostulates=true;
             ipl.append(instPostulate);
         }
-
-        break;}
+        break;
+    }
     case BanRuleId::B2://P believes (X,Y) -> P believes X
     case BanRuleId::B3://P believes (X,Y) -> P believes Y
     case BanRuleId::S2://P sees <X>Y -> P sees X
@@ -499,7 +499,7 @@ BANLogicImpl::BANLogicImpl(QTextBrowser *comment)
 
     //newly added
 
-    //7.1 : P believes X,  P believes Y -> P believes (X,Y)
+    //7.1 : P believes X,  P believes Y -> P  (X  Y concates)believes
     {
         BanStatementList *pre1=new BanStatementList({
                                                         new BanDataList({aP}),
