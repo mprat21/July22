@@ -8,27 +8,50 @@ QStack<QString> BANLogic::BanDataC::getPrintQStack() const
     return printQStack;
 }
 
+BanDataC *BanDataC::getCopy(LPT::LPTPtrList<BanDComponent> &components)
+{
+    BanDataC *copy =new BanDataC();
+    copy->type=type;
+    copy->instantiate=instantiate;
+    copy->dataValue=dataValue;
+    copy->myListdata=myListdata;
+    copy->dataCount=dataCount;
+    copy->printQStack=printQStack;
+
+    return copy;
+}
+
 BANLogic::BanDataC::BanDataC():BanDComponent(BanDComponentType::bAnyData)
 {
     if(this->dataValue=="" || this->dataValue.isEmpty() || this->dataValue.isNull())
     {
-        this->dataValue=QString("_X%1_").arg(dataCount++);
+        this->setId(QString("_X%1_").arg(dataCount++));
         this->type=BanDComponentType::bAnyData;
         this->instantiate=false;
-        myListdata.append(this);
-        printQStack.push(this->getID());
+       // myListdata.append(this);
+       // printQStack.push(this->getID());
     }
 }
 
 BanDataC::BanDataC(BanDataC &orig):BanDComponent(BanDComponentType::bAnyData)
 {
-    setId(orig.getID());
-    type = orig.type;
-    dList=orig.dList;
-    myListdata=orig.myListdata;
-    printQStack=orig.printQStack;
-    instantiate=orig.instantiate;
-    //myListdata.append(this);
+    instantiateObject(&orig);
+   // setId(orig.getID());
+//    type = orig.type;
+//    dList=orig.dList;
+//    myListdata=orig.myListdata;
+//    printQStack=orig.printQStack;
+//    instantiate=orig.instantiate;
+//    //myListdata.append(this);
+}
+
+BanDataC::~BanDataC()
+{
+    while(!this->myListdata.isEmpty())
+    {
+        this->myListdata.clear();
+
+    }
 }
 
 void BANLogic::BanDataC::setDtype(QString dType)
@@ -128,7 +151,7 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent &val)
                 {
                 case BanDComponentType::bAtom:
                 {
-                    if(this->getInstantiate()==true)
+                    if(this->getInstantiate()==true && val.getInstantiate()==false)
                         ifMatches=true;
                     else ifMatches=false;
                     break;
@@ -141,7 +164,7 @@ bool BANLogic::BanDataC::match(BANLogic::BanDComponent &val)
                 }
                 case BanDComponentType::bAnyData:
                 {
-                    if(this->getInstantiate()==true)
+                    if(this->getInstantiate()==true && val.getInstantiate()==false)
                         ifMatches=true;
                     else ifMatches=false;
                     break;
@@ -163,7 +186,7 @@ void BanDataC::instantiateObject(BanDComponent *value)
     case BanDComponentType::bAtom:
     {
         BanDAtom *atm= dynamic_cast<BanDAtom*>(value);
-        this->myListdata.append(atm);
+        //this->myListdata.append(atm);
         this->printQStack.push(atm->getID());
         break;
     }
@@ -214,6 +237,7 @@ void BanDataC::instantiateObject(BanDComponent *value)
     {
         //BanDataC *atm= new BanDataC();
         BanDataC *dc= dynamic_cast<BanDataC*>(value);
+        //this->setId(dc->getID());
         //this->myListdata.append(dc);
         //this->printQStack.push(dc->getID());
         break;
@@ -223,6 +247,7 @@ void BanDataC::instantiateObject(BanDComponent *value)
 }
 bool BANLogic::BanDataC::unify(BANLogic::BanDComponent &value)
 {
+    int mycount=0;
     if(this->match(value))
     {
         switch(value.getDtype())
@@ -230,12 +255,18 @@ bool BANLogic::BanDataC::unify(BANLogic::BanDComponent &value)
         case BanDComponentType::bAtom:
         {
             BanDAtom &comp2=dynamic_cast<BanDAtom&>(value);
-            if(comp2.getInstantiate()==true)
+            if(comp2.getInstantiate()==true && this->getInstantiate()==false)
             {
-                this->setId(comp2.getID());
+                this->myListdata.append(&comp2);
+               // instantiateObject(&comp2);
+                mycount++;
                 unifies=true;
             }
-            else unifies=false;
+            else
+            {
+                unifies=false;
+                break;
+            }
             break;
         }
         case BanDComponentType::bOperator:
@@ -243,37 +274,51 @@ bool BANLogic::BanDataC::unify(BANLogic::BanDComponent &value)
             BanDOperator &comp2=dynamic_cast<BanDOperator&>(value);
             if(comp2.getInstantiate()==true)
             {
+                mycount++;
                 unifies=false;
+                break;
             }
+
             break;
 
         }
         case BanDComponentType::bAnyData:
         {
-            // QTextStream(stdout) <<this->getID()+ " " <<flush;
+             QTextStream(stdout) <<this->getID()+ " " <<flush;
 
             BanDataC &comp2=dynamic_cast<BanDataC&>(value);
-            if(comp2.getInstantiate()==true)
+            if(comp2.getInstantiate()==true && this->getInstantiate()==false)
             {
-                this->setId(comp2.getID());
+                mycount++;
                 unifies=true;
             }
             else
+            {
                 unifies=false;
+
+                break;
+            }
             break;
-
         }
-
+        default:
+        {
+            throw BanException("Failed unification in BanDataC");
         }
+        }
+    }
+    else
+    {
+        unifies=false;
     }
     if(unifies)
     {
+
+        QString s="";
         if(value.getDtype()!=BanDComponentType::bOperator)
             QTextStream(stdout) <<value.getID()+ " " <<flush;
-        //this->setId(this->printQStack.top());
 
-        // this->instantiate=false;
     }
+
     return unifies;
 }
 
@@ -324,6 +369,8 @@ QString BANLogic::BanDataC::getString()
     QString s = "";
 //        foreach(QString ptr,this->printQStack)
 //        {
+//           // s.clear();
+
 //            s.append(ptr);
 //        }
   // this->setId(s);
@@ -334,18 +381,24 @@ QString BANLogic::BanDataC::getString()
         {
         case BanDComponentType::bAtom:
         {
+            s.clear();
+
             BanDAtom *d1=dynamic_cast<BanDAtom *>(ptr);
             s.append((d1->getString()));
             break;
         }
         case BanDComponentType::bOperator:
         {
+            s.clear();
+
             BanDOperator *d1=dynamic_cast<BanDOperator *>(ptr);
             s.append(d1->getString());
             break;
         }
         case BanDComponentType::bAnyData:
         {
+            s.clear();
+
             s.append(ptr->getID());
             //ptr->getString();
             break;

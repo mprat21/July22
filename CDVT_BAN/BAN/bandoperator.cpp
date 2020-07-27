@@ -195,6 +195,7 @@ QString BANLogic::BanDOperator::getString()
 bool BANLogic::BanDOperator::operator ==(const BanDComponent &other)
 {
     bool equals = true;
+    if(other.getDtype()==BanDComponentType::bOperator){
     const BanDOperator &o = dynamic_cast<const BanDOperator &>(other);
     if (adtype != o.adtype) {
         equals = false;
@@ -202,6 +203,8 @@ bool BANLogic::BanDOperator::operator ==(const BanDComponent &other)
          if(oValue == o.oValue) equals = true;
          else equals = false;
     }
+    } else equals = false;
+
     return equals;
 }
 }

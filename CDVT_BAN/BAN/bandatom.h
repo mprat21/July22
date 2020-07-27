@@ -17,6 +17,10 @@ protected:
 
 
 public:
+    friend class BanPostualtes;
+    friend class BanDataC;
+    friend class BanStatementList;
+    friend class BanDataList;
     BanDAtom();
     BanDAtom(banAtomtype aTy, QString aVal);
     BanDAtom(BanDAtom &orig);

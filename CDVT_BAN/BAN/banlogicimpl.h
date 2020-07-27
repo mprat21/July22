@@ -26,6 +26,11 @@ private:
     PostulatePtrList post;
     QTextBrowser *mycomment;
 public:
+    friend class BanDAtom;
+    friend class BanDataList;
+    friend class BanDataC;
+    friend class BanPostulates;
+    friend class BanLogicImpl;
     BANLogicImpl(){};
     BANLogicImpl(QTextBrowser *comment);
     void show();
@@ -36,6 +41,7 @@ public:
     inline const BanStatementList *getKnownTrueStatement(int index) {return dynamic_cast<const BanStatementList *>(lpt->getKnownTrueStatement(index)); }
     QTextBrowser *getMycomment() const;
     void setMycomment(QTextBrowser *value);
+
 };
 }
 #endif // BANLOGICIMPL_H

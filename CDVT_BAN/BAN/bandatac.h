@@ -12,12 +12,18 @@ protected:
     QString dataValue;
     QList<BanDComponent*> myListdata;
     QStack<QString> printQStack;
-    BanDataList *dList;
 
 
 public:
+    friend class BanPostualtes;
+    friend class BanDataC;
+    friend class BanStatementList;
+    friend class BanDataList;
+    friend class BanDAtom;
+
     BanDataC();
     BanDataC(BanDataC &orig);
+    ~BanDataC();
 
    // BanDataC(QList<BanDComponent*> dList1);
     virtual void setDtype(QString dType) override;
@@ -32,6 +38,7 @@ public:
     virtual void printRPN()override;
     QStack<QString> getPrintQStack() const;
     virtual void setInstantiate(bool value) override{this->instantiate=value;}
+    BanDataC* getCopy(LPT::LPTPtrList<BanDComponent> &components);
 
 
     // BanDComponent interface

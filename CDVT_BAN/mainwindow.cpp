@@ -81,8 +81,8 @@ void MainWindow::on_MainWindow_toolButtonStyleChanged(const Qt::ToolButtonStyle 
 
 }
 
-/*
 
+/*
 LPT::LayeredProvingTree *testVerify(QTextBrowser *comment) {
     using namespace GNY;
 
@@ -249,8 +249,13 @@ LPT::LayeredProvingTree *testVerify(QTextBrowser *comment) {
     BanStatementList *dummy2 = new BanStatementList({new BanDataList({A}),new BanDataList({Na,Nb,new BanDOperator(BanDOperatorType::concates),new BanDOperator(BanDOperatorType::FreshData)}),new BanSOperator(BanSOperatorType::believes)});
 
     BanStatementList *dummy3 = new BanStatementList({new BanDataList({A}),new BanDataList({B}),new BanDataList({Nb}),new BanSOperator(BanSOperatorType::said),new BanSOperator(BanSOperatorType::believes)});
-    BanStatementList *dummy4 = new BanStatementList({new BanDataList({A}),new BanDataList({B}),new BanDataList({Na}),new BanSOperator(BanSOperatorType::said),new BanSOperator(BanSOperatorType::believes)});
+    BanStatementList *dummy4 = new BanStatementList({new BanDataList({A}),new BanStatementList({new BanDataList({B}),new BanDataList({Na}),new BanSOperator(BanSOperatorType::believes)}) ,new BanSOperator(BanSOperatorType::believes)});
     BanStatementList *dummy5 = new BanStatementList({new BanDataList({A}),new BanDataList({Na,Nb,new BanDOperator(BanDOperatorType::concates)}),new BanSOperator(BanSOperatorType::believes)});
+
+
+    BanStatementList *dummy6 = new BanStatementList({new BanDataList({B}),new BanDataList({Na}),new BanSOperator(BanSOperatorType::believes)});
+    BanStatementList *dummy7 = new BanStatementList({new BanDataList({A}),dummy6,new BanSOperator(BanSOperatorType::believes)});
+    BanStatementList *dummy8 = new BanStatementList({new BanDataList({A}),new BanDataList({Na}),new BanSOperator(BanSOperatorType::believes)});
 
     assum.append(a1);
     assum.append(a2);
@@ -261,20 +266,28 @@ LPT::LayeredProvingTree *testVerify(QTextBrowser *comment) {
     assum.append(a7);
     assum.append(a8);
     assum.append(a9);
+
     step.append(s1);
     step.append(s2);
     step.append(s3);
     step.append(s4);
-    //step.append(dummy2);
+    step.append(dummy8);
 
-   goals.append(g1);
+    goals.append(g1);
+    goals.append(dummy1);
+
+    goals.append(dummy7);
+    goals.append(dummy5);
     goals.append(dummy2);
-   goals.append(dummy4);
-   goals.append(dummy5);
+ goals.append(dummy4);
+ goals.append(dummy3);
 
-   //  goals.append(g2);
-   //  goals.append(g3);
-   //   goals.append(g4);
+ //  goals.append(g1);
+
+  //goals.append(g2);
+  //  goals.append(g3);
+   //  goals.append(g4);
+
 
     //        BanDAtom *a = new BanDAtom(banAtomtype::Principal, "A");
     //        BanDAtom *b = new BanDAtom(banAtomtype::Principal, "B");

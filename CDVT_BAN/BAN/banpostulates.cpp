@@ -139,32 +139,40 @@ void BanPostulates::updateAtomicComponents()
     }
 }
 
+
 BanPostulates::BanPostulates()
 {
 
 }
 
-BanPostulates::BanPostulates(QString ruleName, BanStatementList *g, QList<BanStatementList *> preList)
+BanPostulates::~BanPostulates()
 {
-    BanStatementList *origPre, *newPre;
-    rule=ruleName;
-    // create copy of goal
-    goal = new BanStatementList(*g);
-    if (goal == NULL) {
-        throw new BanException("Failed to allocate new goal in banPostulate Constructor");
-    }
-    // copy all prerequisites
-    foreach(origPre, preList)
-    {
-        newPre = new BanStatementList(*origPre);
-        if (newPre == NULL) {
-            throw new BanException("Failed to allocate newPre in banPostulate Constructor");
-        }
-        prereq.append(newPre);
-    }
-    allPostulate.append(this);
-    updateAtomicComponents();
+    delete goal;
+    prerequisites.clear();
+    allAtomicComponents.clear();
 }
+
+//BanPostulates::BanPostulates(QString ruleName, BanStatementList *g, QList<BanStatementList *> preList)
+//{
+//    BanStatementList *origPre, *newPre;
+//    rule=ruleName;
+//    // create copy of goal
+//    goal = new BanStatementList(*g);
+//    if (goal == NULL) {
+//        throw new BanException("Failed to allocate new goal in banPostulate Constructor");
+//    }
+//    // copy all prerequisites
+//    foreach(origPre, preList)
+//    {
+//        newPre = new BanStatementList(*origPre);
+//        if (newPre == NULL) {
+//            throw new BanException("Failed to allocate newPre in banPostulate Constructor");
+//        }
+//        prerequisites.append(newPre);
+//    }
+//    allPostulate.append(this);
+//    updateAtomicComponents();
+//}
 
 BanPostulates::BanPostulates(BanRuleId ruleid, LPT::Statement *pGoal, LPT::StatementPtrList &prereq):id(ruleid)
 {
@@ -191,7 +199,7 @@ BanPostulates::BanPostulates(BanPostulates &orig):rule(orig.rule),id(orig.id)
         if (c->getDtype() == BanDComponentType::bAtom) {
             copyComponents.append(new BanDAtom(*dynamic_cast<BanDAtom *>(c)));
         } else if (c->getDtype() == BanDComponentType::bAnyData) {
-            copyComponents.append(new BanDataC(*dynamic_cast<BanDataC *>(c)));
+            //copyComponents.append(new BanDataC(*dynamic_cast<BanDataC *>(c)));
         }
     }
     postulateName = orig.postulateName;

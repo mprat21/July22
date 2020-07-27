@@ -113,25 +113,31 @@ bool BANLogic::BanDAtom::unify(BanDComponent& value)
         case BanDComponentType::bAtom:
         {
             BanDAtom &a =dynamic_cast<BanDAtom&>(value);
-
-            if(this->getID()!=value.getID())
+            if(this->getID()==a.getID())
+            {
+                this->atype=a.atype;
+                this->setId(a.getID());
+                this->inverseKey = a.inverseKey;
+                this->unifies=true;
+            }
+            else if(this->getID()!=value.getID())
             {
                 if(this->getInstantiate()==false && value.getInstantiate()==true)
                 {
-                    BanDAtom &a =dynamic_cast<BanDAtom&>(value);
                     std::cout<<this->getID().toStdString()<<" = " <<a.getID().toStdString() <<endl;
                     this->setId(a.getID());
+                    this->atype=a.atype;
                     this->inverseKey = a.inverseKey;
                     this->unifies=true;
                 }
                 else if(this->getInstantiate()==true && value.getInstantiate()==false)
                 {
                     cout<<endl;
-                    BanDAtom &a =dynamic_cast<BanDAtom&>(value);
-
                     QTextStream(stdout) << value.getID()<<" = "<<this->getID() <<endl;
                     a.setId(this->getID());
                     a.inverseKey = inverseKey;
+                    this->atype=a.atype;
+
                     a.unifies=true;
                 }
                 else if(this->getInstantiate()==false && value.getInstantiate()==false)
@@ -141,15 +147,12 @@ bool BANLogic::BanDAtom::unify(BanDComponent& value)
                     QTextStream(stdout) << this->getID()<<" = "<<value.getID() <<endl;
                     this->setId(a.getID());
                     this->inverseKey = a.inverseKey;
+                    this->atype=a.atype;
+
                     this->unifies=true;
                 }
             }
-            else if(this->getID()==value.getID())
-            {
-                this->setId(a.getID());
-                this->inverseKey = a.inverseKey;
-                this->unifies=true;
-            }
+
             break;
         }
         case BanDComponentType::bOperator:
@@ -161,8 +164,8 @@ bool BANLogic::BanDAtom::unify(BanDComponent& value)
         {
             if(value.getInstantiate()==false)
             {
-                this->unifies=true;
-                value.setId(this->getID());
+                this->unifies=false;
+               // value.setId(this->getID());
             }
             break;
         }
@@ -205,6 +208,8 @@ void BanDAtom::setInverseKey(BanDAtom *value)
     if ( (atype==banAtomtype::PubKey) || (atype==banAtomtype::PrivKey))
         inverseKey = value;
 }
+
+
 
 BANLogic::BanDAtom::BanDAtom():BanDComponent(BanDComponentType::bAtom)
 {
@@ -284,6 +289,7 @@ BANLogic::BanDAtom::BanDAtom(banAtomtype aTy, QString aVal):BanDComponent(BanDCo
         this->atype= aTy;
         instantiate = true;
         atomCount++;
+
     }
 }
 

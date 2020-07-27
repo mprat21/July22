@@ -4,7 +4,6 @@
 #include "banscomponent.h"
 #include "bandoperator.h"
 #include "bandatom.h"
-
 #include <LPT/LPTList.h>
 
 
@@ -12,17 +11,25 @@ namespace BANLogic {
 
 class BanDataList : public BanSComponent
 {
+
 protected:
    static int datacount;
     QString dataID;
-    QList<BanDComponent*> afterUnificationList;
     QList<BanDComponent*> dataList;
     QStack<QString> printStack;
+    QStack<BanDComponent*> otherPart;
+
 
 public:
+    friend class BanLogicImpl;
+    friend class BanDAtom;
+    friend class BanDataC;
+    friend class BanStatementList;
+    friend class BanPostulates;
     BanDataList();
     BanDataList(QList<BanDComponent*> dList1);
     BanDataList(BanDataList &orig);
+    virtual ~BanDataList();
     virtual void printRPN() override;
     virtual void print() override;
     virtual  QString  getID() override{return dataID;}
@@ -43,10 +50,9 @@ public:
 
     BanDataList* getCopy(LPT::LPTPtrList<BanDComponent> &components);
     void instantiateObject(BanSComponent *Scomp);
-
-    QList<BanDComponent *> getAfterUnificationList() const;
-    void setAfterUnificationList(const QList<BanDComponent *> &value);
-    bool findAnyData(QStack<BanDComponent*> anyD, QStack<BanDOperator*> op, QList<BanDComponent*> &anyData, int index);
+    bool instantiateAnyData(QStack<BanDComponent*> otherPart, QStack<BanDOperator*> op, int index);
+    QStack<BanDComponent *> getOtherPart() const;
+    void setOtherPart(const QStack<BanDComponent *> &value);
 };
 }
 #endif // BANDATALIST_H

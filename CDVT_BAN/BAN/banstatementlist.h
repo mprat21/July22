@@ -7,13 +7,13 @@
 #include "bansoperator.h"
 #include "bandatalist.h"
 #include "bandatom.h"
-
 #include <LPT/LPTList.h>
 
 namespace BANLogic{
 
 class BanStatementList : public BanSComponent, public LPT::Statement
 {
+
 protected:
     static int statementCount;
    // BanSOperatorType stype;
@@ -22,9 +22,15 @@ protected:
     QString stid;
 
 public:
+    friend class BanDAtom;
+    friend class BanDataList;
+    friend class BanDataC;
+    friend class BanPostulates;
+    friend class BanLogicImpl;
     BanStatementList();
     BanStatementList(QList<BanSComponent*> stList);
     BanStatementList(BanStatementList &orig);
+    virtual ~BanStatementList();
     //BanStatementList(BanStatementList &orig, QList<BanSComponent*> cList);
     // BanSComponent interface
     virtual void print() override;
@@ -45,7 +51,7 @@ public:
     virtual bool operator ==(const BanSComponent &other) override;
     void setStList(const QList<BanSComponent *> &value);
 
-    void findData(QList<BanDComponent*> sList) const;
+    void findData(BanDataList *List,LPT::LPTList<BanDComponent*> &instantiations, bool X,bool Y) const;
     BanStatementList* getCopy(LPT::LPTPtrList<BanDComponent> &components);
 
 };

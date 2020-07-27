@@ -6,11 +6,12 @@
 namespace BANLogic{
 class BanPostulates: public LPT::Postulate
 {
+
 private:
     QString rule;
     BanRuleId id;
     BanStatementList *goals;
-    QList<BanStatementList*> prereq,temp;
+   // QList<BanStatementList*> prereq,temp;
     QList<BanSComponent*> pComponentList;
     QList<BanPostulates*> allPostulate;
     LPT::LPTPtrList<BanDComponent> allAtomicComponents;
@@ -18,7 +19,8 @@ private:
 
 public:
     BanPostulates();
-    BanPostulates(QString ruleName, BanStatementList *g, QList<BanStatementList*> prerequisites);
+    virtual ~BanPostulates();
+  //  BanPostulates(QString ruleName, BanStatementList *g, QList<BanStatementList*> prerequisites);
     BanPostulates(BanRuleId ruleid, LPT::Statement *pGoal, LPT::StatementPtrList &prereq);
     BanPostulates(BanPostulates &orig);
     QString getRule() const;
